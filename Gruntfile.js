@@ -10,7 +10,10 @@ module.exports = function (grunt) {
                 files: {
                     'js/jquery.js': 'jquery/dist/jquery.js',
                     'js/bootstrap.js': 'bootstrap/dist/js/bootstrap.js',
-                    'js/bootstrap-confirmation.js': 'bootstrap-confirmation2/bootstrap-confirmation.js'
+                    'js/bootstrap-confirmation.js': 'bootstrap-confirmation2/bootstrap-confirmation.js',
+                    'js/raphael.js': 'raphael/raphael.js',
+                    'js/justgage.js': 'justgage-toorshia/justgage.js',
+                    'js/Chart.js': 'Chart.js/Chart.js'
                 }
             },
             stylesheets: {
@@ -55,6 +58,9 @@ module.exports = function (grunt) {
                     'web/assets/js/jquery.js',
                     'web/assets/js/bootstrap.js',
                     'web/assets/js/bootstrap-confirmation.js',
+                    'web/assets/js/raphael.js',
+                    'web/assets/js/justgage.js',
+                    'web/assets/js/chart.js',
                     'src/AppBundle/Resources/js/*.js'
                 ],
                 dest: 'web/assets/js/bundled.js'

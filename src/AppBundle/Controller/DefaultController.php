@@ -23,7 +23,15 @@ class DefaultController extends Controller
      */
     public function dashboardAction(Request $request)
     {
-        return [];
+        $persons = $this->getDoctrine()
+                    ->getRepository('AppBundle:Person')
+                    ->findAll();
+
+        $companies = $this->getDoctrine()
+                    ->getRepository('AppBundle:Company')
+                    ->findAll();
+
+        return ['companies' => $companies, 'persons' => $persons];
 
     }
 

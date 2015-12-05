@@ -4,6 +4,8 @@
         "jquery": "1.11.*",
         "bootstrap": "3.*",
         "font-awesome": "4.*",
-        "bootstrap-confirmation2": "*"
+        "bootstrap-confirmation2": "*",
+        "justgage-toorshia": "*",
+        "Chart.js": "*"
     }
 }

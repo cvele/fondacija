@@ -16,4 +16,11 @@ class CompanyRepository extends \Doctrine\ORM\EntityRepository
 		return $this->getEntityManager()
             ->createQuery('SELECT c FROM AppBundle:Company c ORDER BY c.name ASC');
 	}
+
+	public function findAllGroupedByDate()
+	{
+		return $this->getEntityManager()
+            ->createQuery('SELECT c FROM AppBundle:Company c GROUP BY c.createdAt')
+            ->getResult();
+	}
 }
