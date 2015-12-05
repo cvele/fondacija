@@ -1,0 +1,22 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block subheader_small_title %}Company{% endblock %}
+{% block subheader_big_title %}Modify {{ company.name }}{% endblock %}
+
+{% block subheader_actions %}
+    <a class="ce apn ame pull-right" href="{{ path("company_list") }}">
+        <i class="fa fa-arrow-left"></i>
+        Back
+    </a>
+{% endblock %}
+
+{% block body %}
+	{{ form_start(form) }}
+	    {{ form_errors(form) }}
+
+	    {{ form_row(form.name) }}
+	    {{ form_row(form.description) }}
+
+	    {{ form_row(form.save, { 'label': 'Modify Company' }) }}
+	{{ form_end(form) }}
+{% endblock %}

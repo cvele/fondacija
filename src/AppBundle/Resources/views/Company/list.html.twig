@@ -1,0 +1,49 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block subheader_small_title %}Company{% endblock %}
+{% block subheader_big_title %}List view{% endblock %}
+
+{% block subheader_actions %}
+<div class="nz pull-right">
+	<a href="{{ path("company_new") }}" class="ce apn">
+		<i class="fa fa-plus"></i> Create
+	</a>
+	<button type="button" class="ce apn" data-placement="left" id="delete-companies">
+		<span class="bv zz"></span> Delete
+	</button>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="ud">
+  <div class="eg">
+    <table class="cl" data-sort="table">
+      <thead>
+        <tr>
+          <th class="header"><input type="checkbox" class="aqn" id="selectAll"></th>
+          <th class="header">Company</th>
+          <th class="header">Description</th>
+          <th class="header">Created</th>
+          <th class="header"></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for company in companies %}
+        <tr data-id="{{ company.id }}" class="company-row">
+          <td><input type="checkbox" class="aqo company-checkbox" data-id="{{ company.id }}"></td>
+          <td><a href="{{ path('company_show', {'id': company.id })}}">{{ company.name }}</a></td>
+          <td>{{ company.description }}</td>
+          <td>{{ company.createdAt|date("d.m.Y H:i:s") }}</td>
+          <td><a class="black-link" href="{{ path('company_edit', {'id': company.id}) }}"><i class="fa fa-pencil"></i></a></td>
+        </tr>
+       {% endfor %}
+        </tbody>
+    </table>
+    {% if companies.haveToPaginate %}
+    <div class="pagerfanta text-right">
+    	{{ pagerfanta(companies, 'twitter_bootstrap3') }}
+	</div>
+	{% endif %}
+  </div>
+</div>
+{% endblock %}

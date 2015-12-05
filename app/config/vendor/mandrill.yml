@@ -1,0 +1,7 @@
+hip_mandrill:
+    api_key: Z8WIR8H3dMUY3OUkJ3G-Qg
+    disable_delivery: false
+    debug: true
+    default:
+        sender: no-reply@xteam.rs
+        sender_name: X-TEAM

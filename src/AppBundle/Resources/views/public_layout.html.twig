@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% block stylesheets %}
+        <link rel="stylesheet" type="text/css" href="/assets/css/bundled.min.css">
+        {% endblock %}
+    </head>
+    <body class="{% block pageclass %}{% endblock %}">
+
+    <div class="container">
+    {% block body %}
+
+    {% endblock %}
+    </div>
+
+    {% block javascripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script type="text/javascript" src="/assets/js/bundled.min.js"></script>
+    {% endblock %}
+    </body>
+</html>

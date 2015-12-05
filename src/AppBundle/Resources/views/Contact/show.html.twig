@@ -1,0 +1,44 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block subheader_small_title %}Contact{% endblock %}
+{% block subheader_big_title %}{{ contact.lastname }}, {{ contact.firstname }}{% endblock %}
+
+{% block subheader_actions %}
+    <a class="ce apn ame pull-right" href="{{ path("contact_list") }}">
+        <i class="fa fa-arrow-left"></i>
+        Back to list
+    </a>
+{% endblock %}
+
+{% block body %}
+
+<div class="row">
+	<div class="col-xs-6">
+		<dl class="dl-horizontal">
+			<dt>Business Phone</dt>
+			<dd>{{ contact.businessPhone|default("None") }}</dd>
+			<dt>Home Phone</dt>
+			<dd>{{ contact.homePhone|default("None") }}</dd>
+			<dt>Mobile Phone</dt>
+			<dd>{{ contact.homePhone|default("None") }}</dd>
+		</dl>
+	</div>
+	<div class="col-xs-6">
+		<dl class="dl-horizontal">
+			<dt>Business E-Mail</dt>
+			<dd>{{ contact.businessEmail|default("None") }}</dd>
+			<dt>Personal E-Mail</dt>
+			<dd>{{ contact.personalEmail|default("None") }}</dd>
+			<dt>Skype</dt>
+			<dd>{{ contact.skype|default("None") }}</dd>
+		</dl>
+	</div>
+</div>
+<hr />
+
+{% include 'AppBundle:Company:company_badge.html.twig' with {'company': contact.company } %}
+
+{% set view = 'flat' %}
+{% include 'FOSCommentBundle:Thread:async.html.twig' with {'id': contact.id } %}
+
+{% endblock %}

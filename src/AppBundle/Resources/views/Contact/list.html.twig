@@ -1,0 +1,49 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block subheader_small_title %}Contact{% endblock %}
+{% block subheader_big_title %}List view{% endblock %}
+
+{% block subheader_actions %}
+<div class="nz pull-right">
+	<a href="{{ path("contact_new") }}" class="ce apn">
+		<i class="fa fa-plus"></i> Create
+	</a>
+	<button type="button" class="ce apn" data-placement="left" id="delete-contacts">
+		<span class="bv zz"></span> Delete
+	</button>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="ud">
+  <div class="eg">
+    <table class="cl" data-sort="table">
+      <thead>
+        <tr>
+          <th class="header"><input type="checkbox" class="aqn" id="selectAll"></th>
+          <th class="header">Name</th>
+          <th class="header">Company</th>
+          <th class="header">Created</th>
+          <th class="header"></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for contact in contacts %}
+        <tr data-id="{{ contact.id }}" class="contact-row">
+          <td><input type="checkbox" class="aqo contact-checkbox" data-id="{{ contact.id }}"></td>
+          <td><a href="{{ path("contact_show", {"id": contact.id})}}">{{ contact.lastname }}, {{ contact.firstname }}</a></td>
+          <td><a href="{{ path('company_show', {'id': contact.company.id })}}">{{ contact.company }}</a></td>
+          <td>{{ contact.createdAt|date("d.m.Y H:i:s") }}</td>
+          <td><a class="black-link" href="{{ path('contact_edit', {'id': contact.id}) }}"><i class="fa fa-pencil"></i></a></td>
+        </tr>
+       {% endfor %}
+        </tbody>
+    </table>
+    {% if contacts.haveToPaginate %}
+    <div class="pagerfanta text-right">
+    	{{ pagerfanta(contacts, 'twitter_bootstrap3') }}
+	</div>
+	{% endif %}
+  </div>
+</div>
+{% endblock %}

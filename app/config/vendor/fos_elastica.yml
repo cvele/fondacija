@@ -1,0 +1,30 @@
+fos_elastica:
+    clients:
+        default: { host: localhost, port: 9200 }
+    indexes:
+        app:
+            finder: ~
+            index_name: fondacija_%kernel.environment%
+            types:
+                company:
+                    mappings:
+                        name: ~
+                    persistence:
+                        driver: orm
+                        model: AppBundle\Entity\Company
+                        provider: ~
+                        listener: ~
+                        finder: ~
+                person:
+                    mappings:
+                        firstname: ~
+                        lastname: ~
+                        businessEmail: ~
+                        personalEmail: ~
+                        skype: ~
+                    persistence:
+                        driver: orm
+                        model: AppBundle\Entity\Person
+                        provider: ~
+                        listener: ~
+                        finder: ~

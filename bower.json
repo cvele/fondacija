@@ -1,0 +1,9 @@
+{
+    "name": "symfony-application",
+    "dependencies": {
+        "jquery": "1.11.*",
+        "bootstrap": "3.*",
+        "font-awesome": "4.*",
+        "bootstrap-confirmation2": "*"
+    }
+}

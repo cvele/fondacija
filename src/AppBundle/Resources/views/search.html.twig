@@ -1,0 +1,17 @@
+{% extends "AppBundle::layout.html.twig" %}
+{% block subheader_actions %}{% endblock %}
+
+{% block subheader_small_title %}Search{% endblock %}
+{% block subheader_big_title %}Results for "{{ query }}"{% endblock %}
+
+{% block body %}
+
+{% for result in results %}
+	{% if class(result) == 'Person' %}
+		{% include 'AppBundle:Contact:contact_badge.html.twig' with {'contact': result } %}
+	{% elseif class(result) == 'Company' %}
+		{% include 'AppBundle:Company:company_badge.html.twig' with {'company': result } %}
+	{% endif %}
+{% endfor %}
+
+{% endblock %}
