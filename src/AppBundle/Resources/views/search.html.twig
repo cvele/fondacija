@@ -11,6 +11,8 @@
 		{% include 'AppBundle:Contact:contact_badge.html.twig' with {'contact': result } %}
 	{% elseif class(result) == 'Company' %}
 		{% include 'AppBundle:Company:company_badge.html.twig' with {'company': result } %}
+	{% elseif class(result) == 'Document' %}
+		{% include 'AppBundle:Document:document_badge.html.twig' with {'document': result } %}
 	{% endif %}
 {% endfor %}
 

@@ -26,6 +26,8 @@ class AppKernel extends Kernel
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new Ornicar\GravatarBundle\OrnicarGravatarBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
+            new Oneup\UploaderBundle\OneupUploaderBundle(),
+            new Igorw\FileServeBundle\IgorwFileServeBundle(),
             new AppBundle\AppBundle(),
         );
 

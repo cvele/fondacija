@@ -31,7 +31,11 @@ class DefaultController extends Controller
                     ->getRepository('AppBundle:Company')
                     ->findNum();
 
-        return ['companiesNm' => $companiesNm, 'personsNm' => $personsNm];
+        $documentsNm = $this->getDoctrine()
+                    ->getRepository('AppBundle:Document')
+                    ->findNum();
+
+        return ['companiesNm' => $companiesNm, 'personsNm' => $personsNm, 'documentsNm' => $documentsNm];
 
     }
 

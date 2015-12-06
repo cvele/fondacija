@@ -6,6 +6,8 @@
         "font-awesome": "4.*",
         "bootstrap-confirmation2": "*",
         "justgage-toorshia": "*",
-        "Chart.js": "*"
+        "Chart.js": "*",
+        "blueimp-file-upload": "*",
+        "jquery-ui": "*"
     }
 }

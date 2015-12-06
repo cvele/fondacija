@@ -1,0 +1,4 @@
+oneup_uploader:
+    mappings:
+        document:
+            frontend: blueimp # or any uploader you use in the frontend

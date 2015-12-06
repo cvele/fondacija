@@ -13,13 +13,17 @@ module.exports = function (grunt) {
                     'js/bootstrap-confirmation.js': 'bootstrap-confirmation2/bootstrap-confirmation.js',
                     'js/raphael.js': 'raphael/raphael.js',
                     'js/justgage.js': 'justgage-toorshia/justgage.js',
-                    'js/Chart.js': 'Chart.js/Chart.js'
+                    'js/Chart.js': 'Chart.js/Chart.js',
+                    "js/jquery.ui.widget.js": "blueimp-file-upload/js/vendor/jquery.ui.widget.js",
+                    "js/jquery.iframe-transport.js": "blueimp-file-upload/js/jquery.iframe-transport.js",
+                    "js/jquery.fileupload.js": "blueimp-file-upload/js/jquery.fileupload.js"
                 }
             },
             stylesheets: {
                 files: {
                     'css/bootstrap.css': 'bootstrap/dist/css/bootstrap.css',
-                    'css/font-awesome.css': 'font-awesome/css/font-awesome.css'
+                    'css/font-awesome.css': 'font-awesome/css/font-awesome.css',
+                    "css/jquery.fileupload.css": "blueimp-file-upload/css/jquery.fileupload.css"
                 }
             },
             fonts: {
@@ -49,6 +53,7 @@ module.exports = function (grunt) {
                 src: [
                     'web/assets/css/bootstrap.css',
                     'web/assets/css/font-awesome.css',
+                    "web/assets/css/jquery.fileupload.css",
                     'src/AppBundle/Resources/css/*.css'
                 ],
                 dest: 'web/assets/css/bundled.css'
@@ -61,6 +66,9 @@ module.exports = function (grunt) {
                     'web/assets/js/raphael.js',
                     'web/assets/js/justgage.js',
                     'web/assets/js/chart.js',
+                    "web/assets/js/jquery.ui.widget.js",
+                    "web/assets/js/jquery.iframe-transport.js",
+                    "web/assets/js/jquery.fileupload.js",
                     'src/AppBundle/Resources/js/*.js'
                 ],
                 dest: 'web/assets/js/bundled.js'

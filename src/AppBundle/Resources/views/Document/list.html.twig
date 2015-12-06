@@ -1,0 +1,52 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block subheader_small_title %}Documents{% endblock %}
+{% block subheader_big_title %}List view{% endblock %}
+
+{% block subheader_actions %}
+<div class="nz pull-right">
+	<a href="{{ path("document_create") }}" class="ce apn">
+		<i class="fa fa-plus"></i> Create
+	</a>
+	<button type="button" class="ce apn" data-placement="left" id="delete-documents">
+		<span class="bv zz"></span> Delete
+	</button>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="ud">
+  <div class="eg">
+    <table class="cl" data-sort="table">
+      <thead>
+        <tr>
+          <th class="header"><input type="checkbox" class="aqn" id="selectAll"></th>
+          <th class="header">Title</th>
+          <th class="header">File</th>
+          <th class="header">Size</th>
+          <th class="header">Author</th>
+          <th class="header">Created</th>
+          <th class="header"></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for document in documents %}
+        <tr data-id="{{ document.id }}" class="document-row">
+          <td><input type="checkbox" class="aqo document-checkbox" data-id="{{ document.id }}"></td>
+          <td><a href="{{ path("document_show", {"id": document.id})}}">{{ document.title }}</a></td>
+          <td>{{ document.originalFileName }}</td>
+          <td>{{ document.size|format_bytes }}</td>
+          <td>{{ document.user }}</td>
+          <td>{{ document.createdAt|date("d.m.Y H:i") }}</td>
+        </tr>
+       {% endfor %}
+        </tbody>
+    </table>
+    {% if documents.haveToPaginate %}
+    <div class="pagerfanta text-right">
+    	{{ pagerfanta(documents, 'twitter_bootstrap3') }}
+	</div>
+	{% endif %}
+  </div>
+</div>
+{% endblock %}

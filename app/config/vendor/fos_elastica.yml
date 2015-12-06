@@ -6,6 +6,18 @@ fos_elastica:
             finder: ~
             index_name: fondacija_%kernel.environment%
             types:
+                document:
+                    mappings:
+                        title: ~
+                        description: ~
+                        mimeType: ~
+                        originalFileName: ~
+                    persistence:
+                        driver: orm
+                        model: AppBundle\Entity\Document
+                        provider: ~
+                        listener: ~
+                        finder: ~
                 company:
                     mappings:
                         name: ~

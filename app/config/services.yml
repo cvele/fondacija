@@ -46,3 +46,17 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    app.twig_extension.bytes.class:
+        class: AppBundle\Twig\FormatBytesExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+
+    app.upload_listener:
+        class: AppBundle\Event\Listener\UploadListener
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @security.context
+        tags:
+            - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }

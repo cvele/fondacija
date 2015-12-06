@@ -1,0 +1,31 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block subheader_small_title %}Documents{% endblock %}
+{% block subheader_big_title %}
+	<i class="fa fa-file-{{ document.extension }}-o"></i>
+	{{ document.title }}
+{% endblock %}
+
+{% block subheader_actions %}
+<div class="nz pull-right">
+  <a href="{{ path("document_list") }}" class="ce apn">
+    <i class="fa fa-arrow-left"></i>
+    Back to list
+  </a>
+  <a href="{{ path("document_download", {'id': document.id}) }}" class="ce apn">
+    <i class="fa fa-download"></i>
+  </a>
+</div>
+{% endblock %}
+
+{% block body %}
+<p>
+<small>
+	Document <strong>{{ document.originalFileName }}</strong> created by {{ document.user.username }} on {{ document.createdAt|date("d.m.Y H:i") }}.
+	Document size is <strong>{{ document.size|format_bytes }}</strong>.
+</small>
+</p>
+<p class="lead">
+	{{ document.description }}
+</p>
+{% endblock %}

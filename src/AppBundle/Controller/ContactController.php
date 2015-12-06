@@ -21,7 +21,7 @@ class ContactController extends Controller
      * @Route("/contact", name="contact_list")
      * @Template("AppBundle:Contact:list.html.twig")
      */
-    public function listCompanyAction(Request $request)
+    public function listContactsAction(Request $request)
     {
         $q = $this->getDoctrine()
                     ->getRepository('AppBundle:Person')

@@ -8,6 +8,7 @@ imports:
     - { resource: vendor/pagerfanta.yml }
     - { resource: vendor/gravatar.yml }
     - { resource: vendor/fos_elastica.yml }
+    - { resource: vendor/oneup_uploader.yml }
 
 
 # Put parameters here that don't need to change on each machine where the app is deployed

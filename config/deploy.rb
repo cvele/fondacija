@@ -41,6 +41,7 @@ namespace :deploy do
   task :bower do
       on roles(:all) do
 		execute "cd #{release_path} && SYMFONY_ENV=prod /usr/bin/env sudo chmod -R 777 app/cache"
+		execute "cd #{release_path} && SYMFONY_ENV=prod /usr/bin/env sudo chmod -R 777 web/uploads"
         execute "cd #{release_path} && SYMFONY_ENV=prod /usr/bin/env php app/console assetic:dump  --no-debug"
       end
   end

@@ -8846,6 +8846,44 @@ button.close {
   content: "\f295";
 }
 
+@charset "UTF-8";
+/*
+ * jQuery File Upload Plugin CSS
+ * https://github.com/blueimp/jQuery-File-Upload
+ *
+ * Copyright 2013, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  -ms-filter: 'alpha(opacity=0)';
+  font-size: 200px;
+  direction: ltr;
+  cursor: pointer;
+}
+
+/* Fixes for IE < 8 */
+@media screen\9 {
+  .fileinput-button input {
+    filter: alpha(opacity=0);
+    font-size: 100%;
+    height: 100%;
+  }
+}
+
 body {
   padding-top:    20px;
   padding-bottom: 20px;
@@ -8876,6 +8914,48 @@ hr {
 
 a.black-link {
   color: #333 !important;
+}
+/* Color Added for Clarity */
+.fa-file-text-o:before, 
+.fa-file-txt-o:before {
+    content:"\f0f6";
+}
+.fa-file-word-o:before, 
+.fa-file-doc-o:before, 
+.fa-file-docx-o:before {
+    content:"\f1c2";
+}
+.fa-file-excel-o:before, 
+.fa-file-xls-o:before, 
+.fa-file-xlsx-o:before {
+    content:"\f1c3";
+}
+.fa-file-powerpoint-o:before, 
+.fa-file-ppt-o:before, 
+.fa-file-pptx-o:before {
+    content:"\f1c4";
+}
+.fa-file-photo-o:before, 
+.fa-file-picture-o:before, 
+.fa-file-image-o:before, 
+.fa-file-bmp-o:before, 
+.fa-file-gif-o:before, 
+.fa-file-jpeg-o:before, 
+.fa-file-jpg-o:before, 
+.fa-file-png-o:before {
+    content:"\f1c5";
+}
+.fa-file-archive-o:before, 
+.fa-file-bz2-o:before, 
+.fa-file-dmg-o:before, 
+.fa-file-gz-o:before, 
+.fa-file-gzip-o:before, 
+.fa-file-iso-o:before, 
+.fa-file-rar-o:before, 
+.fa-file-tar-o:before, 
+.fa-file-tgz-o:before, 
+.fa-file-zip-o:before {
+    content:"\f1c6";
 }
 @font-face {
   font-family: 'Roboto';

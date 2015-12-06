@@ -29,6 +29,11 @@ class User extends BaseUser
      */
     private $companies;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Document", mappedBy="user")
+     */
+    private $documents;
+
     use TimestampableEntity;
 
     public function __construct()
@@ -54,5 +59,15 @@ class User extends BaseUser
     public function getCompanies()
     {
         return $this->companies;
+    }
+
+    /**
+     * Gets the value of documents.
+     *
+     * @return mixed
+     */
+    public function getDocuments()
+    {
+        return $this->documents;
     }
 }
