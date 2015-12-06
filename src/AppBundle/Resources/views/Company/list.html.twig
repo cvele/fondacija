@@ -22,7 +22,6 @@
         <tr>
           <th class="header"><input type="checkbox" class="aqn" id="selectAll"></th>
           <th class="header">Company</th>
-          <th class="header">Description</th>
           <th class="header">Created</th>
           <th class="header"></th>
         </tr>
@@ -32,8 +31,7 @@
         <tr data-id="{{ company.id }}" class="company-row">
           <td><input type="checkbox" class="aqo company-checkbox" data-id="{{ company.id }}"></td>
           <td><a href="{{ path('company_show', {'id': company.id })}}">{{ company.name }}</a></td>
-          <td>{{ company.description }}</td>
-          <td>{{ company.createdAt|date("d.m.Y H:i:s") }}</td>
+          <td>{{ company.createdAt|date("d.m.Y H:i") }}</td>
           <td><a class="black-link" href="{{ path('company_edit', {'id': company.id}) }}"><i class="fa fa-pencil"></i></a></td>
         </tr>
        {% endfor %}
@@ -42,7 +40,7 @@
     {% if companies.haveToPaginate %}
     <div class="pagerfanta text-right">
     	{{ pagerfanta(companies, 'twitter_bootstrap3') }}
-	</div>
+    </div>
 	{% endif %}
   </div>
 </div>

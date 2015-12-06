@@ -17,10 +17,10 @@ class CompanyRepository extends \Doctrine\ORM\EntityRepository
             ->createQuery('SELECT c FROM AppBundle:Company c ORDER BY c.name ASC');
 	}
 
-	public function findAllGroupedByDate()
+	public function findNum()
 	{
 		return $this->getEntityManager()
-            ->createQuery('SELECT c FROM AppBundle:Company c GROUP BY c.createdAt')
-            ->getResult();
+            ->createQuery('SELECT count(c) FROM AppBundle:Company c')
+            ->getSingleResult()[1];
 	}
 }

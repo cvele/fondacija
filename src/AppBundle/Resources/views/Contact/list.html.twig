@@ -33,7 +33,7 @@
           <td><input type="checkbox" class="aqo contact-checkbox" data-id="{{ contact.id }}"></td>
           <td><a href="{{ path("contact_show", {"id": contact.id})}}">{{ contact.lastname }}, {{ contact.firstname }}</a></td>
           <td><a href="{{ path('company_show', {'id': contact.company.id })}}">{{ contact.company }}</a></td>
-          <td>{{ contact.createdAt|date("d.m.Y H:i:s") }}</td>
+          <td>{{ contact.createdAt|date("d.m.Y H:i") }}</td>
           <td><a class="black-link" href="{{ path('contact_edit', {'id': contact.id}) }}"><i class="fa fa-pencil"></i></a></td>
         </tr>
        {% endfor %}

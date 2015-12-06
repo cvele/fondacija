@@ -79,9 +79,12 @@ class ContactController extends Controller
         $form = $this->get('app.form.person')->setData($person);
         $form->handleRequest($request);
 
+        $user = $this->get('security.context')->getToken()->getUser();
+
         if ($form->isValid())
         {
             $em = $this->getDoctrine()->getManager();
+            $person->setUser($user);
             $em->persist($person);
             $em->flush();
 

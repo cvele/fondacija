@@ -15,4 +15,11 @@ class PersonRepository extends \Doctrine\ORM\EntityRepository
 		return $this->getEntityManager()
             ->createQuery('SELECT c FROM AppBundle:Person c ORDER BY c.lastname, c.firstname ASC');
 	}
+
+	public function findNum()
+	{
+		return $this->getEntityManager()
+            ->createQuery('SELECT count(c) FROM AppBundle:Person c')
+            ->getSingleResult()[1];
+	}
 }

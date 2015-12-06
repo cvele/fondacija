@@ -129,9 +129,12 @@ class CompanyController extends Controller
         $form = $this->get('app.form.company')->setData($company);
         $form->handleRequest($request);
 
+        $user = $this->get('security.context')->getToken()->getUser();
+
         if ($form->isValid())
         {
             $em = $this->getDoctrine()->getManager();
+            $company->setUser($user);
             $em->persist($company);
             $em->flush();
 

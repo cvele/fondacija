@@ -49,6 +49,12 @@ class Company
      */
     private $persons;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="persons")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true)
+     */
+    private $user;
+
     use TimestampableEntity;
 
     public function __construct()
@@ -173,5 +179,29 @@ class Company
     public function getCompany()
     {
         return $this->getName();
+    }
+
+    /**
+     * Gets the value of user.
+     *
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Sets the value of user.
+     *
+     * @param mixed $user the user
+     *
+     * @return self
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }
