@@ -4,4 +4,4 @@ hip_mandrill:
     debug: true
     default:
         sender: no-reply@ferdinand.rs
-        sender_name: fondacija
+        sender_name: Dodir Nade
