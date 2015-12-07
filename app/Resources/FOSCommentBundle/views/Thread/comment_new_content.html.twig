@@ -29,7 +29,7 @@
             <form class="fos_comment_comment_new_form" action="{{ url('fos_comment_post_thread_comments', url_parameters) }}" data-parent="{{ parent.id|default() }}" method="POST">
 
             <div class="row">
-                 <div class="col-xs-10">
+                 <div class="col-xs-12">
                 {% block fos_comment_form_fields %}
                     <div class="fos_comment_form_errors">
                     {{ form_errors(form) }}
@@ -44,8 +44,9 @@
                     {{ form_rest(form) }}
                 {% endblock %}
                 </div>
-
-                <div class="fos_comment_submit col-xs-2">
+            </div>
+            <div class="row">
+                <div class="fos_comment_submit col-xs-12" style="margin-top:2px;">
                     {% block fos_comment_form_submit %}
                         {% if parent is not null %}
                             <input type="button" value="{% trans from 'FOSCommentBundle' %}fos_comment_comment_reply_cancel{% endtrans %}" class="fos_comment_comment_reply_cancel" />
