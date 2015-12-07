@@ -61,6 +61,12 @@ $(document).ready(function(){
 	});
 	$(document).on('fos_comment_submitted_form', function (event, data) {
 		$('.highlighter-content').text('');
+		setTimeout(function(){
+			$('.fos_comment_submit input').prop('disabled', false);
+		}, 500);
+	});
+	$(document).on('fos_comment_submitting_form', function (event, data) {
+		$('.fos_comment_submit input').prop('disabled', true);
 	});
 });
 </script>
