@@ -45,7 +45,7 @@ class CommentListener
     {
         $comment = $event->getComment();
 
-        $body      = $comment->getBody();
+        $body = $comment->getBody();
 
         preg_match_all("/@([A-Za-z0-9\_\-]+)/i", $body, $matches);
 
@@ -76,7 +76,13 @@ class CommentListener
         $author    = $comment->getAuthor();
         $permalink = $comment->getThread()->getPermalink();
 
-        preg_match("/app\/contact\/([0-9]+)\/show/i", $permalink, $contact_match);
+        $res = preg_match("/app\/contact\/([0-9]+)\/show/i", $permalink, $contact_match);
+        if ($res == false)
+        {
+            $this->onCommentPersistDocument($event);
+            return;
+        }
+
         $contact_id   = $contact_match[1];
         $contact_repo = $this->em->getRepository('AppBundle:Person');
         $contact      = $contact_repo->find($contact_id);
@@ -84,7 +90,7 @@ class CommentListener
         preg_match_all("/@\[([A-Za-z0-9\_\-]+)\]\(user\:([0-9]+)\)/i", $body, $matches);
 
         $user_repo     = $this->em->getRepository('AppBundle:User');
-        foreach ($matches[2] as $key => $user_id) 
+        foreach ($matches[2] as $key => $user_id)
         {
             $mentioned_user = $user_repo->find($user_id);
             if ($mentioned_user == null)
@@ -104,6 +110,54 @@ class CommentListener
             $message
                 ->addTo($mentioned_user->getEmail())
                 ->setSubject('New note for '.$contact->getLastname().", ".$contact->getFirstname())
+                ->setHtml($html);
+
+            $result = $this->mandrill->send($message);
+
+        }
+    }
+
+    public function onCommentPersistDocument(CommentEvent $event)
+    {
+        $comment = $event->getComment();
+
+        $body      = $comment->getBody();
+        $author    = $comment->getAuthor();
+        $permalink = $comment->getThread()->getPermalink();
+
+        $res = preg_match("/app\/document\/([0-9]+)\/show/i", $permalink, $document_match);
+        if ($res == false)
+        {
+            return;
+        }
+
+        $document_id   = $document_match[1];
+        $document_repo = $this->em->getRepository('AppBundle:Document');
+        $document      = $document_repo->find($document_id);
+
+        preg_match_all("/@\[([A-Za-z0-9\_\-]+)\]\(user\:([0-9]+)\)/i", $body, $matches);
+
+        $user_repo     = $this->em->getRepository('AppBundle:User');
+        foreach ($matches[2] as $key => $user_id)
+        {
+            $mentioned_user = $user_repo->find($user_id);
+            if ($mentioned_user == null)
+            {
+                continue;
+            }
+
+            $html = $this->templating->render('AppBundle:Email:document_mention.html.twig', [
+                    'mentionee' => $mentioned_user,
+                    'mentioner' => $author,
+                    'permalink' => $permalink,
+                    'document'   => $document,
+                    'comment'   => $comment
+                ]);
+
+            $message = new Message();
+            $message
+                ->addTo($mentioned_user->getEmail())
+                ->setSubject('New note for document '.$document->getTitle())
                 ->setHtml($html);
 
             $result = $this->mandrill->send($message);

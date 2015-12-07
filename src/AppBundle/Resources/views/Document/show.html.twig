@@ -27,4 +27,41 @@
 <p class="lead">
 	{{ document.description }}
 </p>
+
+{% set view = 'flat' %}
+{% include 'FOSCommentBundle:Thread:async.html.twig' with {'id': document.id } %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+$(document).ready(function(){
+  var hash = window.location.hash.substring(1);
+  var m;
+  $(document).on('fos_comment_load_thread', function (event, data) {
+    m = $('textarea').mentionsInput({source: Routing.generate('get_usernames')});
+    autosize($('textarea'));
+
+    if (hash!='' && !isNaN(hash))
+    {
+      $('html, body').animate({
+              scrollTop: $('#fos_comment_comment_body_' + hash).offset().top
+          }, 0);
+    }
+  });
+  $(document).on('fos_comment_submitted_form', function (event, data) {
+    $('.highlighter-content').text('');
+    setTimeout(function(){
+      $('.fos_comment_submit input').prop('disabled', false);
+    }, 500);
+  });
+  $(document).on('fos_comment_submitting_form', function (event, data) {
+    $('.fos_comment_submit input').prop('disabled', true);
+  });
+  $(document).on('fos_comment_edit_comment', function (event, data) {
+    
+  });
+});
+</script>
 {% endblock %}
