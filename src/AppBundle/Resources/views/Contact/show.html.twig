@@ -47,10 +47,16 @@
 {{ parent() }}
 <script type="text/javascript">
 $(document).ready(function(){
+	var hash = window.location.hash.substring(1);
 	var m;
 	$(document).on('fos_comment_load_thread', function (event, data) {
 		m = $('textarea').mentionsInput({source: Routing.generate('get_usernames')});
 		autosize($('textarea'));
+
+		if (hash!='')
+		{
+			location.href = '#fos_comment_comment_body_' + hash;
+		}
 	});
 	$(document).on('fos_comment_submitted_form', function (event, data) {
 		$('.highlighter-content').text('');
