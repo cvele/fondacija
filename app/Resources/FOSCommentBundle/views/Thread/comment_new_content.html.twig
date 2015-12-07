@@ -18,13 +18,13 @@
 
 {% block fos_comment_comment_form_holder %}
     <div class="fos_comment_comment_form_holder">
-    <div class="row">
+<!--     <div class="row">
         {% block fos_comment_form_title %}
         <div class="col-xs-12">
             <h3>Add new note</h3>
         </div>
         {% endblock %}
-    </div>
+    </div> -->
         {% block fos_comment_comment_new_form %}
             <form class="fos_comment_comment_new_form" action="{{ url('fos_comment_post_thread_comments', url_parameters) }}" data-parent="{{ parent.id|default() }}" method="POST">
 
@@ -51,7 +51,7 @@
                         {% if parent is not null %}
                             <input type="button" value="{% trans from 'FOSCommentBundle' %}fos_comment_comment_reply_cancel{% endtrans %}" class="fos_comment_comment_reply_cancel" />
                         {% endif %}
-                        <input class="ce apn ame btn-block" type="submit" value="{% trans from 'FOSCommentBundle' %}fos_comment_comment_new_submit{% endtrans %}" />
+                        <input class="btn btn-primary btn-block" type="submit" value="Create Note" />
                     {% endblock %}
                 </div>
                 </div>

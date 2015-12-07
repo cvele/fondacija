@@ -38,7 +38,7 @@
 {% include 'AppBundle:Company:company_badge.html.twig' with {'company': contact.company } %}
 
 {% set view = 'flat' %}
-{% include 'FOSCommentBundle:Thread:async.html.twig' with {'id': contact.id } %}
+{% include 'FOSCommentBundle:Thread:async.html.twig' with {'id': 'contact:' ~ contact.id } %}
 
 {% endblock %}
 

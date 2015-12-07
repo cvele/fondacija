@@ -32,8 +32,8 @@ a.black-link {
 }
 
 textarea.mention {
-  height: 35px;
-  overflow: hidden !important;
+  border-radius: 0;
+  border: 1px solid #ccc;
 }
 
 .mentions-input {

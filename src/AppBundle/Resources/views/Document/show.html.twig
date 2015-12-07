@@ -29,7 +29,7 @@
 </p>
 
 {% set view = 'flat' %}
-{% include 'FOSCommentBundle:Thread:async.html.twig' with {'id': document.id } %}
+{% include 'FOSCommentBundle:Thread:async.html.twig' with {'id': 'document:' ~ document.id } %}
 
 {% endblock %}
 
