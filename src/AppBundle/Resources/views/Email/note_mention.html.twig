@@ -1,0 +1,9 @@
+<p>Hello {{ mentionee | capitalize }}!</p>
+<p>
+	{{ mentioner | capitalize }} has created a new note for contact <strong>{{ contact.lastname }}, {{ contact.firstname }}</strong> from company {{ contact.company.name }} and has mentioned you. You should probably take a look. <strong><a href="{{permalink}}#{{ comment.id }}">Click here to view note</a></strong></p>
+<p>
+	We have also included note here if you couldn't be bathered to view the actual note... even tho you probably should.
+</p>
+<blockquote>
+{{ comment.body | nl2br | display_mention | raw }}
+</blockquote>

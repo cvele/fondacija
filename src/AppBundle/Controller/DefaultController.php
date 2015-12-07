@@ -18,6 +18,30 @@ use Pagerfanta\Pagerfanta;
 class DefaultController extends Controller
 {
     /**
+     * @Route("/get_usernames.json", name="get_usernames", options={"expose"=true})
+     */
+    public function getUsernamesAction(Request $request)
+    {
+
+        $finder = $this->container->get('fos_elastica.finder.app.user');
+        $results = $finder->find($request->query->get('term')."*");
+
+        $gravatar = $this->get('templating.helper.gravatar');
+
+        $users = [];
+        foreach($results as $user)
+        {
+            $users[] = [
+                        'value'  => $user->getUsername(),
+                        'uid'    => 'user:' . $user->getId(),
+                        'avatar' => $gravatar->getUrl($user->getEmail())
+                    ];
+        }
+
+        return new JsonResponse($users);
+    }
+
+    /**
      * @Route("/app", name="dashboard")
      * @Template("AppBundle::dashboard.html.twig")
      */

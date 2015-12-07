@@ -18,6 +18,15 @@ fos_elastica:
                         provider: ~
                         listener: ~
                         finder: ~
+                user:
+                    mappings:
+                        username: ~
+                    persistence:
+                        driver: orm
+                        model: AppBundle\Entity\User
+                        provider: ~
+                        listener: ~
+                        finder: ~
                 company:
                     mappings:
                         name: ~

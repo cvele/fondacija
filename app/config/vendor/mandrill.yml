@@ -3,5 +3,5 @@ hip_mandrill:
     disable_delivery: false
     debug: true
     default:
-        sender: no-reply@xteam.rs
-        sender_name: X-TEAM
+        sender: no-reply@ferdinand.rs
+        sender_name: fondacija

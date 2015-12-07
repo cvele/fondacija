@@ -9,6 +9,8 @@ module.exports = function (grunt) {
             scripts: {
                 files: {
                     'js/jquery.js': 'jquery/dist/jquery.js',
+                    "js/jquery-ui.js": "jquery-ui/jquery-ui.js",
+                    "js/jquery.mentions.js": "jquery-mentions/jquery.mentions.js",
                     'js/bootstrap.js': 'bootstrap/dist/js/bootstrap.js',
                     'js/bootstrap-confirmation.js': 'bootstrap-confirmation2/bootstrap-confirmation.js',
                     'js/raphael.js': 'raphael/raphael.js',
@@ -16,7 +18,8 @@ module.exports = function (grunt) {
                     'js/Chart.js': 'Chart.js/Chart.js',
                     "js/jquery.ui.widget.js": "blueimp-file-upload/js/vendor/jquery.ui.widget.js",
                     "js/jquery.iframe-transport.js": "blueimp-file-upload/js/jquery.iframe-transport.js",
-                    "js/jquery.fileupload.js": "blueimp-file-upload/js/jquery.fileupload.js"
+                    "js/jquery.fileupload.js": "blueimp-file-upload/js/jquery.fileupload.js",
+                    'js/autosize.js': 'autosize/dist/autosize.js'
                 }
             },
             stylesheets: {
@@ -61,6 +64,8 @@ module.exports = function (grunt) {
             js : {
                 src : [
                     'web/assets/js/jquery.js',
+                    "web/assets/js/jquery-ui.js",
+                    "web/assets/js/jquery.mentions.js",
                     'web/assets/js/bootstrap.js',
                     'web/assets/js/bootstrap-confirmation.js',
                     'web/assets/js/raphael.js',
@@ -69,6 +74,7 @@ module.exports = function (grunt) {
                     "web/assets/js/jquery.ui.widget.js",
                     "web/assets/js/jquery.iframe-transport.js",
                     "web/assets/js/jquery.fileupload.js",
+                    "web/assets/js/autosize.js",
                     'src/AppBundle/Resources/js/*.js'
                 ],
                 dest: 'web/assets/js/bundled.js'

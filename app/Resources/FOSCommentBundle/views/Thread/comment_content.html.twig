@@ -67,7 +67,7 @@
                 {% if comment is fos_comment_raw %}
                     {{ comment.rawBody | raw }}
                 {% else %}
-                    {{ comment.body | nl2br }}
+                    {{ comment.body | nl2br | display_mention | raw }}
                 {% endif %}
             {% endif %}
         {% endblock fos_comment_comment_body %}

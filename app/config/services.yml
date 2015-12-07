@@ -53,6 +53,12 @@ services:
         tags:
             - { name: twig.extension }
 
+    app.twig_extension.mention.class:
+        class: AppBundle\Twig\DisplayUserExtenstion
+        public: false
+        tags:
+            - { name: twig.extension }
+
     app.upload_listener:
         class: AppBundle\Event\Listener\UploadListener
         arguments:
@@ -60,3 +66,14 @@ services:
             - @security.context
         tags:
             - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
+
+    app.comment.listener:
+        class: AppBundle\Event\Listener\CommentListener
+        arguments:
+            - @fos_comment.manager.comment
+            - @doctrine.orm.entity_manager
+            - @hip_mandrill.dispatcher
+            - @templating
+        tags:
+            - { name: kernel.event_listener, event: fos_comment.comment.post_persist, method: onCommentPersist}
+            - { name: kernel.event_listener, event: fos_comment.comment.pre_persist, method: onCommentPrePersist}

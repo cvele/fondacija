@@ -1,13 +1,15 @@
 {
     "name": "symfony-application",
     "dependencies": {
-        "jquery": "1.11.*",
+        "jquery": "2.1.*",
+        "jquery-ui": "*",
         "bootstrap": "3.*",
         "font-awesome": "4.*",
         "bootstrap-confirmation2": "*",
         "justgage-toorshia": "*",
         "Chart.js": "*",
         "blueimp-file-upload": "*",
-        "jquery-ui": "*"
+        "jquery-mentions": "1.0.0",
+        "autosize": "*"
     }
 }

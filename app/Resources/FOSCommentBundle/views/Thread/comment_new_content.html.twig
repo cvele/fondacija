@@ -35,8 +35,12 @@
                     {{ form_errors(form) }}
                     {{ form_errors(form.body) }}
                     </div>
-                    {{ form_widget(form.body) }}
-
+                    {{
+                        form_widget(form.body, {'attr':{
+                            'class': 'mention',
+                            'style': 'height: 35px'
+                        }})
+                    }}
                     {{ form_rest(form) }}
                 {% endblock %}
                 </div>

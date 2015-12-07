@@ -30,3 +30,48 @@ hr {
 a.black-link {
   color: #333 !important;
 }
+
+textarea.mention {
+  height: 35px;
+  overflow: hidden !important;
+}
+
+.mentions-input {
+    position: relative;
+}
+
+.mentions-input .input {
+    overflow: hidden;
+    position: relative;
+}
+
+.mentions-input .highlighter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    color: transparent;
+    overflow: hidden;
+    border-style: solid;
+    border-color: transparent;
+}
+
+.mentions-input .highlighter-content {
+    position: relative;
+}
+
+.mentions-input .highlighter-content strong {
+  font-weight: inherit;
+  background-color: #e5e5e5;
+  display: inline;
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+}
+
+[data-mention] {
+  background-color: #e5e5e5;
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+}
+
+.mention-text {
+  color: #1997c6;
+  font-weight: normal;
+}
