@@ -19,6 +19,7 @@ class PersonType extends AbstractType
             ->add('company', 'entity', [
                 'class' => 'AppBundle:Company',
                 'choice_label' => 'Company',
+                'placeholder' => 'Select company'
             ])
             ->add('firstname', 'text', ['label' => "First Name", 'attr' => ['autofocus' => '']])
             ->add('lastname', 'text', ['label' => "Last Name"])

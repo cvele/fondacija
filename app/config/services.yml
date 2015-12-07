@@ -75,5 +75,5 @@ services:
             - @hip_mandrill.dispatcher
             - @templating
         tags:
-            - { name: kernel.event_listener, event: fos_comment.comment.post_persist, method: onCommentPersist}
+            - { name: kernel.event_listener, event: fos_comment.comment.pre_persist, method: onCommentPersist}
             - { name: kernel.event_listener, event: fos_comment.comment.pre_persist, method: onCommentPrePersist}

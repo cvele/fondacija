@@ -72,6 +72,11 @@ class CommentListener
     {
         $comment = $event->getComment();
 
+        if ($this->commentManager->isNewComment($comment) == false)
+        {
+            return;
+        }
+
         $body      = $comment->getBody();
         $author    = $comment->getAuthor();
         $permalink = $comment->getThread()->getPermalink();
@@ -121,6 +126,11 @@ class CommentListener
     {
         $comment = $event->getComment();
 
+        if ($this->commentManager->isNewComment($comment) == false)
+        {
+            return;
+        }
+
         $body      = $comment->getBody();
         $author    = $comment->getAuthor();
         $permalink = $comment->getThread()->getPermalink();
@@ -150,14 +160,14 @@ class CommentListener
                     'mentionee' => $mentioned_user,
                     'mentioner' => $author,
                     'permalink' => $permalink,
-                    'document'   => $document,
+                    'document'  => $document,
                     'comment'   => $comment
                 ]);
 
             $message = new Message();
             $message
                 ->addTo($mentioned_user->getEmail())
-                ->setSubject('New note for document '.$document->getTitle())
+                ->setSubject('New note for document ' . $document->getTitle())
                 ->setHtml($html);
 
             $result = $this->mandrill->send($message);
