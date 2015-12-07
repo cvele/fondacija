@@ -4,6 +4,10 @@
 <p>
 	We have also included note here if you couldn't be bathered to view the actual note... even tho you probably should.
 </p>
-<blockquote>
+<blockquote style="
+    background-color: #eee;
+    padding: 20px;
+    border-radius: 5px;
+">
 {{ comment.body | nl2br | display_mention | raw }}
 </blockquote>
