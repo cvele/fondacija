@@ -6,7 +6,6 @@
             </a>
             <div class="media-body">
                 <h4 class="media-heading">
-                <small>Contact</small>
                 <a href="{{ path("contact_show", {"id": contact.id }) }}" style="color:rgb(85, 85, 85)!important;">{{ contact.lastname }}, {{ contact.firstname }}</a> <a href="{{ path("company_show", {"id": contact.company.id }) }}" style="color:rgb(170, 170, 170)!important;"><small>{{ contact.company }}</small></h4></a>
                 <h5>Personal E-Mail: {{ contact.personalEmail }}; Created: {{ contact.createdAt|date("d.m.Y") }}; </h5>
             </div>
