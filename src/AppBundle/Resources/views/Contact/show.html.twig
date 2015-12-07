@@ -46,7 +46,7 @@
 {% block javascripts %}
 {{ parent() }}
 <script type="text/javascript">
-$(function () {
+$(document).ready(function(){
 	var m;
 	$(document).on('fos_comment_load_thread', function (event, data) {
 		m = $('textarea').mentionsInput({source: Routing.generate('get_usernames')});
