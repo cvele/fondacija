@@ -12,6 +12,8 @@ set :deploy_to, '/var/www/fondacija/'
 set :linked_files, ['app/config/parameters.yml']
 
 set :linked_dirs, [fetch(:log_path), fetch(:web_path) + "/uploads", "vendor"]
+
+set :use_sudo,     true
 # Default value for :scm is :git
 # set :scm, :git
 
