@@ -92,6 +92,7 @@ class Person
 
     use TimestampableEntity;
 
+    use \AppBundle\Traits\Entity\TenantTrait;
 
     /**
      * Get id

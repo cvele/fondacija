@@ -25,7 +25,7 @@ class ContactController extends Controller
     {
         $q = $this->getDoctrine()
                     ->getRepository('AppBundle:Person')
-                    ->findAllQuery();
+                    ->findAllQuery($this->get('session')->get('tenant'));
 
         $adapter = new DoctrineORMAdapter($q);
 
@@ -59,6 +59,12 @@ class ContactController extends Controller
                 continue;
             }
 
+            if (!$this->get('app.helper.tenant')->isTenantObjectOwner($contact))
+            {
+                throw new AccessDeniedException();
+            }
+
+
             $em->remove($contact);
             $em->flush();
 
@@ -84,7 +90,9 @@ class ContactController extends Controller
         if ($form->isValid())
         {
             $em = $this->getDoctrine()->getManager();
+            $tenant = $em->getRepository('AppBundle:Tenant')->find($this->get('session')->get('tenant')->getId());
             $person->setUser($user);
+            $person->setTenant($tenant);
             $em->persist($person);
             $em->flush();
 
@@ -104,6 +112,11 @@ class ContactController extends Controller
      */
     public function editCompanyAction(Person $contact, Request $request)
     {
+        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($contact))
+        {
+            throw new AccessDeniedException();
+        }
+
         $form = $this->get('app.form.person')->setData($contact);
         $form->handleRequest($request);
 
@@ -129,6 +142,10 @@ class ContactController extends Controller
      */
     public function showContactAction(Person $contact, Request $request)
     {
+        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($contact))
+        {
+            throw new AccessDeniedException();
+        }
 
         return ['contact' => $contact];
     }

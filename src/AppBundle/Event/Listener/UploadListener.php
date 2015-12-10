@@ -28,8 +28,11 @@ class UploadListener
 
 		$uploaded_file = $request->files->get('file');
 
+		$tenant = $this->em->getRepository('AppBundle:Tenant')->find($request->getSession()->get('tenant')->getId());
+
 		$document = new Document();
 		$document->setTitle($title);
+		$document->setTenant($tenant);
 		$document->setDescription($description);
 		$document->setFilename($file->getFilename());
 		$document->setExtension($file->getExtension());

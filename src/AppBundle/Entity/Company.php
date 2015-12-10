@@ -55,6 +55,8 @@ class Company
      */
     private $user;
 
+    use \AppBundle\Traits\Entity\TenantTrait;
+
     use TimestampableEntity;
 
     public function __construct()

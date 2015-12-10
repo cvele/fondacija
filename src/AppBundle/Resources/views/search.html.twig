@@ -2,7 +2,13 @@
 {% block subheader_actions %}{% endblock %}
 
 {% block subheader_small_title %}Search{% endblock %}
-{% block subheader_big_title %}Results for "{{ query }}"{% endblock %}
+{% block subheader_big_title %}
+{% if results.getNbResults() > 0 %}
+	{{ results.getNbResults() }} results for "{{ query }}"
+{% else %}
+	No results for "{{ query }}"
+{% endif %}
+{% endblock %}
 
 {% block body %}
 
@@ -15,5 +21,12 @@
 		{% include 'AppBundle:Document:document_badge.html.twig' with {'document': result } %}
 	{% endif %}
 {% endfor %}
+
+
+    {% if results.haveToPaginate %}
+    <div class="pagerfanta text-center">
+    	{{ pagerfanta(results, 'twitter_bootstrap3') }}
+	</div>
+	{% endif %}
 
 {% endblock %}

@@ -1,0 +1,9 @@
+{% trans_default_domain 'FOSUserBundle' %}
+{% extends "AppBundle::public_layout.html.twig" %}
+
+{% block pageclass %}tenants{% endblock %}
+{% block body %}
+	{% for tenant in tenants %}
+		<a href="{{ path('dashboard') }}?tenant_id={{ tenant.id }}">{{ tenant }}</a>
+	{% endfor %}
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\Entity\Tenant;
 /**
  * PersonRepository
  *
@@ -10,16 +11,18 @@ namespace AppBundle\Entity\Repository;
  */
 class PersonRepository extends \Doctrine\ORM\EntityRepository
 {
-	public function findAllQuery()
+	public function findAllQuery(Tenant $tenant)
 	{
 		return $this->getEntityManager()
-            ->createQuery('SELECT c FROM AppBundle:Person c ORDER BY c.lastname, c.firstname ASC');
+            ->createQuery('SELECT c FROM AppBundle:Person c where c.tenant = :tenant ORDER BY c.lastname, c.firstname ASC')
+            ->setParameter('tenant', $tenant->getId());
 	}
 
-	public function findNum()
+	public function findNum(Tenant $tenant)
 	{
 		return $this->getEntityManager()
-            ->createQuery('SELECT count(c) FROM AppBundle:Person c')
+            ->createQuery('SELECT count(c) FROM AppBundle:Person c where c.tenant = :tenant')
+            ->setParameter('tenant', $tenant->getId())
             ->getSingleResult()[1];
 	}
 }

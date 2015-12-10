@@ -3,6 +3,8 @@
 namespace AppBundle\Entity\Repository;
 
 use Pagerfanta\Adapter\DoctrineORMAdapter;
+use AppBundle\Entity\Tenant;
+
 /**
  * CompanyRepository
  *
@@ -11,16 +13,18 @@ use Pagerfanta\Adapter\DoctrineORMAdapter;
  */
 class CompanyRepository extends \Doctrine\ORM\EntityRepository
 {
-	public function findAllQuery()
+	public function findAllQuery(Tenant $tenant)
 	{
 		return $this->getEntityManager()
-            ->createQuery('SELECT c FROM AppBundle:Company c ORDER BY c.name ASC');
+            ->createQuery('SELECT c FROM AppBundle:Company c where c.tenant = :tenant ORDER BY c.name ASC')
+            ->setParameter('tenant', $tenant->getId());
 	}
 
-	public function findNum()
+	public function findNum(Tenant $tenant)
 	{
 		return $this->getEntityManager()
-            ->createQuery('SELECT count(c) FROM AppBundle:Company c')
+            ->createQuery('SELECT count(c) FROM AppBundle:Company c where c.tenant = :tenant')
+            ->setParameter('tenant', $tenant->getId())
             ->getSingleResult()[1];
 	}
 }

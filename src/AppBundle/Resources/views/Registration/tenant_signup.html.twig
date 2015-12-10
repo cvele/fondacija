@@ -1,0 +1,12 @@
+{% trans_default_domain 'FOSUserBundle' %}
+{% extends "AppBundle::public_layout.html.twig" %}
+
+{% block pageclass %}signup{% endblock %}
+{% block body %}
+{{ form_start(form, {'method': 'post'}) }}
+    {{ form_widget(form) }}
+    <div>
+        <input type="submit" class="btn btn-primary" value="Create Account" />
+    </div>
+{{ form_end(form) }}
+{% endblock %}

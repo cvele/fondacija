@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
@@ -36,9 +37,28 @@ class User extends BaseUser
 
     use TimestampableEntity;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection|UserTenants[]
+     *
+     * @ORM\ManyToMany(targetEntity="Tenant", inversedBy="users", cascade={"persist"})
+     * @ORM\JoinTable(
+     *  name="tenant_users",
+     *  joinColumns={
+     *      @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     *  },
+     *  inverseJoinColumns={
+     *      @ORM\JoinColumn(name="tenant_id", referencedColumnName="id")
+     *  }
+     * )
+     */
+    protected $userTenants;
+    /**
+     * Default constructor, initializes collections
+     */
     public function __construct()
     {
         parent::__construct();
+        $this->userTenants = new ArrayCollection();
     }
 
     /**
@@ -69,5 +89,43 @@ class User extends BaseUser
     public function getDocuments()
     {
         return $this->documents;
+    }
+
+    public function setTenant(Tenant $tenant)
+    {
+        $this->addUserTenant($tenant);
+    }
+
+    public function getTenant()
+    {
+        return $this->userTenants[0];
+    }
+
+    public function getUserTenants()
+    {
+        return $this->userTenants;
+    }
+
+    /**
+     * @param Tenant $tenant
+     */
+    public function addUserTenant(Tenant $tenant)
+    {
+        if ($this->userTenants->contains($tenant)) {
+            return;
+        }
+        $this->userTenants->add($tenant);
+        $tenant->addUser($this);
+    }
+    /**
+     * @param Tenant $tenant
+     */
+    public function removeUserGroup(Tenant $tenant)
+    {
+        if (!$this->userTenants->contains($tenant)) {
+            return;
+        }
+        $this->userTenants->removeElement($tenant);
+        $tenant->removeUser($this);
     }
 }

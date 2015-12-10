@@ -20,7 +20,7 @@ class DocumentController extends Controller
     /**
      * @Route("/documents_delete", name="documents_delete_multiple", options={"expose"=true})
      */
-    public function deleteContactsAction(Request $request)
+    public function deleteDocumentsAction(Request $request)
     {
         $ids  = $request->request->get('ids');
         $em   = $this->getDoctrine()->getEntityManager();
@@ -38,6 +38,11 @@ class DocumentController extends Controller
             if ($document == null)
             {
                 continue;
+            }
+
+            if (!$this->get('app.helper.tenant')->isTenantObjectOwner($document))
+            {
+                throw new AccessDeniedException();
             }
 
             unlink($this->container->getParameter('kernel.root_dir') . '/../web/uploads/document/'.$document->getFilename());
@@ -58,7 +63,7 @@ class DocumentController extends Controller
     {
         $q = $this->getDoctrine()
                     ->getRepository('AppBundle:Document')
-                    ->findAllQuery();
+                    ->findAllQuery($this->get('session')->get('tenant'));
 
         $adapter = new DoctrineORMAdapter($q);
 
@@ -84,6 +89,11 @@ class DocumentController extends Controller
      */
     public function downloadDocumentAction(Document $document, Request $request)
     {
+        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($document))
+        {
+            throw new AccessDeniedException();
+        }
+
         $response = $this->get('igorw_file_serve.response_factory')
                         ->create('../web/uploads/document/'.$document->getFilename(), 
                                 $document->getMimeType(), 
@@ -98,6 +108,10 @@ class DocumentController extends Controller
      */
     public function showDocumentAction(Document $document, Request $request)
     {
+        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($document))
+        {
+            throw new AccessDeniedException();
+        }
 
         return ['document' => $document];
     }

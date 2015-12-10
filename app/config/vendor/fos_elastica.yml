@@ -12,6 +12,10 @@ fos_elastica:
                         description: ~
                         mimeType: ~
                         originalFileName: ~
+                        tenant:
+                            type: "nested"
+                            properties:
+                                id: ~
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\Document
@@ -21,6 +25,10 @@ fos_elastica:
                 user:
                     mappings:
                         username: ~
+                        tenant:
+                            type: "nested"
+                            properties:
+                                id: ~
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\User
@@ -30,6 +38,10 @@ fos_elastica:
                 company:
                     mappings:
                         name: ~
+                        tenant:
+                            type: "nested"
+                            properties:
+                                id: ~
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\Company
@@ -43,6 +55,10 @@ fos_elastica:
                         businessEmail: ~
                         personalEmail: ~
                         skype: ~
+                        tenant:
+                            type: "nested"
+                            properties:
+                                id: ~
                     persistence:
                         driver: orm
                         model: AppBundle\Entity\Person

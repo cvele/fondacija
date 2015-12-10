@@ -1,0 +1,17 @@
+services:
+    app.hip_mandrill.message:
+        class: Hip\MandrillBundle\Message
+
+    app.helper.tenant:
+        class: AppBundle\Helper\TenantHelper
+        arguments:
+            - @session
+
+    app.fosuserbundlemandrillmailer:
+         class: AppBundle\Mailer\FOSUserBundleMailer
+         arguments:
+             - @router
+             - @templating
+             - @hip_mandrill.dispatcher
+             - @app.hip_mandrill.message
+             - { confirmation.template: %fos_user.registration.confirmation.template%, resetting_password.template: %fos_user.resetting.email.template% }

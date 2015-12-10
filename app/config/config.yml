@@ -2,6 +2,10 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: services/event.yml }
+    - { resource: services/forms.yml }
+    - { resource: services/twig.yml }
+    - { resource: services/general.yml }
     - { resource: vendor/fos_user.yml }
     - { resource: vendor/fos_comment.yml }
     - { resource: vendor/mandrill.yml }

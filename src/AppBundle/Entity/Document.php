@@ -78,6 +78,7 @@ class Document
 
     use TimestampableEntity;
 
+    use \AppBundle\Traits\Entity\TenantTrait;
 
     /**
      * Get id

@@ -24,7 +24,24 @@ class DefaultController extends Controller
     {
 
         $finder = $this->container->get('fos_elastica.finder.app.user');
-        $results = $finder->find($request->query->get('term')."*");
+
+        $boolQuery = new \Elastica\Query\BoolQuery();
+
+        $fieldQuery = new \Elastica\Query\MultiMatch();
+        $fieldQuery->setQuery($request->query->get('term')."*");
+        $fieldQuery->setFields(['_all']);
+        $boolQuery->addMust($fieldQuery);
+
+        $tenantQuery = new \Elastica\Query\Term();
+        $tenantQuery->setTerm('id', $this->get('session')->get('tenant')->getId());
+
+
+        $nestedQuery = new \Elastica\Query\Nested();
+        $nestedQuery->setPath('tenant');
+        $nestedQuery->setQuery($tenantQuery);
+        $boolQuery->addMust($nestedQuery);
+
+        $results = $finder->find($boolQuery);
 
         $gravatar = $this->get('templating.helper.gravatar');
 
@@ -42,6 +59,18 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/app/tenants", name="pick_tenant")
+     * @Template("AppBundle::pick_tenant.html.twig")
+     */
+    public function pickTenantAction(Request $request)
+    {
+        $user = $this->get('security.context')->getToken()->getUser();
+
+        return ['tenants' => $user->getUserTenants()];
+
+    }
+
+    /**
      * @Route("/app", name="dashboard")
      * @Template("AppBundle::dashboard.html.twig")
      */
@@ -49,15 +78,15 @@ class DefaultController extends Controller
     {
         $personsNm = $this->getDoctrine()
                     ->getRepository('AppBundle:Person')
-                    ->findNum();
+                    ->findNum($this->get('session')->get('tenant'));
 
         $companiesNm = $this->getDoctrine()
                     ->getRepository('AppBundle:Company')
-                    ->findNum();
+                    ->findNum($this->get('session')->get('tenant'));
 
         $documentsNm = $this->getDoctrine()
                     ->getRepository('AppBundle:Document')
-                    ->findNum();
+                    ->findNum($this->get('session')->get('tenant'));
 
         return ['companiesNm' => $companiesNm, 'personsNm' => $personsNm, 'documentsNm' => $documentsNm];
 
@@ -72,7 +101,24 @@ class DefaultController extends Controller
         $q = $request->query->get('q');
 
         $finder = $this->container->get('fos_elastica.finder.app');
-        $results = $finder->find($q);
+
+        $boolQuery = new \Elastica\Query\BoolQuery();
+
+        $fieldQuery = new \Elastica\Query\MultiMatch();
+        $fieldQuery->setQuery($q);
+        $fieldQuery->setFields(['_all']);
+        $boolQuery->addMust($fieldQuery);
+
+        $tenantQuery = new \Elastica\Query\Term();
+        $tenantQuery->setTerm('id', $this->get('session')->get('tenant')->getId());
+
+
+        $nestedQuery = new \Elastica\Query\Nested();
+        $nestedQuery->setPath('tenant');
+        $nestedQuery->setQuery($tenantQuery);
+        $boolQuery->addMust($nestedQuery);
+
+        $results = $finder->findPaginated($boolQuery);
 
         return ['results' => $results, 'query' => $q];
 
