@@ -28,12 +28,27 @@
                     </div>
 
                     <div class="collapse and" id="nav-toggleable-sm">
-                        <form action="{{ path('search') }}" class="aor">
+                        <form action="{{ path('search') }}" class="aor search-form">
                             <input class="form-control" name="q" type="text" placeholder="Search...">
                                 <button type="submit" class="fm">
                                 <span class="bv adn"></span>
                             </button>
                         </form>
+
+                        {% if app.user.userTenants|length > 1 %}
+                        <div class="dropdown" style="margin-bottom: 10px;">
+                            <a href="#" class="btn btn-default btn-block dropdown-toggle" type="button" id="switchAccountMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Switch Account
+                            <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="switchAccountMenu">
+                                {% for userTenant in app.user.userTenants %}
+                                    <li{% if userTenant.id == app.session.get('tenant').id %} class="active"{% endif %}><a href="?tenant_id={{ userTenant.id }}">{{ userTenant }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
                         <ul class="nav of nav-stacked">
                             <li class="tq">Sections</li>
                             <li >
@@ -50,18 +65,10 @@
                             </li>
 
                             <li class="tq">Settings</li>
-                            {% if app.user.userTenants|length > 1 %}
-                                <li class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                        Switch Account <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                    {% for userTenant in app.user.userTenants %}
-                                        <li{% if userTenant.id == app.session.get('tenant').id %} class="active"{% endif %}><a href="?tenant_id={{ userTenant.id }}">{{ userTenant }}</a></li>
-                                    {% endfor %}
-                                    </ul>
-                                </li>
-                            {% endif %}
+
+                            <li>
+                                <a href="{{ path('user_settings') }}">Manage Users</a>
+                            </li>
                         </ul>
                         <hr class="rw aky">
                     </div>

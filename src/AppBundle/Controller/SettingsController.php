@@ -13,20 +13,21 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Pagerfanta\Pagerfanta;
 
 /**
- * @Route("/")
+ * @Route("/app/settings")
  */
-class DefaultController extends Controller
+class SettingsController extends Controller
 {
 
     /**
-     * @Route("/app/tenants", name="pick_tenant")
-     * @Template("AppBundle::pick_tenant.html.twig")
+     * @Route("/users", name="user_settings")
+     * @Template("AppBundle:Settings:user.html.twig")
      */
-    public function pickTenantAction(Request $request)
+    public function userSettingsAction(Request $request)
     {
         $user = $this->get('security.context')->getToken()->getUser();
+        $tenant = $this->get('session')->get('tenant');
 
-        return ['tenants' => $user->getUserTenants()];
+        return ['tenant' => $tenant];
 
     }
 }

@@ -50,7 +50,7 @@ class Company
     private $persons;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="persons")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="companies")
      * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true)
      */
     private $user;

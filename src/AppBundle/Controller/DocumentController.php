@@ -13,12 +13,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Pagerfanta\Pagerfanta;
 
 /**
- * @Route("/app")
+ * @Route("/app/document")
  */
 class DocumentController extends Controller
 {
     /**
-     * @Route("/documents_delete", name="documents_delete_multiple", options={"expose"=true})
+     * @Route("/delete-multiple", name="documents_delete_multiple", options={"expose"=true})
      */
     public function deleteDocumentsAction(Request $request)
     {
@@ -56,7 +56,7 @@ class DocumentController extends Controller
         return new JsonResponse(['deleted' => $deleted]);
     }
     /**
-     * @Route("/document", name="document_list")
+     * @Route("/list", name="document_list")
      * @Template("AppBundle:Document:list.html.twig")
      */
     public function listDocumentsAction(Request $request)
@@ -74,7 +74,7 @@ class DocumentController extends Controller
     }
 
     /**
-     * @Route("/document/create", name="document_create")
+     * @Route("/create", name="document_create")
      * @Template("AppBundle:Document:create.html.twig")
      */
     public function documentCreate(Request $request)
@@ -84,7 +84,7 @@ class DocumentController extends Controller
     }
 
     /**
-     * @Route("/document/{id}/download", name="document_download")
+     * @Route("/{id}/download", name="document_download")
      * @ParamConverter("document", class="AppBundle:Document")
      */
     public function downloadDocumentAction(Document $document, Request $request)
@@ -95,14 +95,14 @@ class DocumentController extends Controller
         }
 
         $response = $this->get('igorw_file_serve.response_factory')
-                        ->create('../web/uploads/document/'.$document->getFilename(), 
-                                $document->getMimeType(), 
+                        ->create('../web/uploads/document/'.$document->getFilename(),
+                                $document->getMimeType(),
                                 ['inline'=>false, 'serve_filename'=>$document->getOriginalFileName()]);
         return $response;
     }
 
     /**
-     * @Route("/document/{id}/show", name="document_show", options={"expose"=true})
+     * @Route("/{id}/show", name="document_show", options={"expose"=true})
      * @Template("AppBundle:Document:show.html.twig")
      * @ParamConverter("document", class="AppBundle:Document")
      */

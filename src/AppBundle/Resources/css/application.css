@@ -75,3 +75,7 @@ textarea.mention {
   color: #1997c6;
   font-weight: normal;
 }
+
+.search-form {
+  margin-bottom: 15px !important;
+}

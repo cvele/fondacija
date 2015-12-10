@@ -14,12 +14,12 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 
 /**
- * @Route("/app")
+ * @Route("/app/company")
  */
 class CompanyController extends Controller
 {
     /**
-     * @Route("/company", name="company_list")
+     * @Route("/list", name="company_list")
      * @Template("AppBundle:Company:list.html.twig")
      */
     public function listCompanyAction(Request $request)
@@ -37,7 +37,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/company/{id}/delete", name="company_delete")
+     * @Route("/{id}/delete", name="company_delete")
      * @ParamConverter("company", class="AppBundle:Company")
      */
     public function deleteCompanyAction(Company $company, Request $request)
@@ -57,7 +57,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/companies_delete", name="company_delete_multiple", options={"expose"=true})
+     * @Route("/company/delete-multiple", name="company_delete_multiple", options={"expose"=true})
      */
     public function deleteCompaniesAction(Request $request)
     {
@@ -94,7 +94,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/company/{id}/show", name="company_show")
+     * @Route("/{id}/show", name="company_show")
      * @Template("AppBundle:Company:show.html.twig")
      * @ParamConverter("company", class="AppBundle:Company")
      */
@@ -109,7 +109,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/company/{id}/edit", name="company_edit")
+     * @Route("/{id}/edit", name="company_edit")
      * @Template("AppBundle:Company:edit.html.twig")
      * @ParamConverter("company", class="AppBundle:Company")
      */
@@ -139,7 +139,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * @Route("/company/new", name="company_new")
+     * @Route("/new", name="company_new")
      * @Template("AppBundle:Company:create.html.twig")
      */
     public function createCompanyAction(Request $request)

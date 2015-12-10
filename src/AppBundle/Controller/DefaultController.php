@@ -27,19 +27,19 @@ class DefaultController extends Controller
 
         $boolQuery = new \Elastica\Query\BoolQuery();
 
-        $fieldQuery = new \Elastica\Query\MultiMatch();
+        $fieldQuery = new \Elastica\Query\QueryString();
+        $fieldQuery->setFields(['username']);
         $fieldQuery->setQuery($request->query->get('term')."*");
-        $fieldQuery->setFields(['_all']);
         $boolQuery->addMust($fieldQuery);
 
-        $tenantQuery = new \Elastica\Query\Term();
-        $tenantQuery->setTerm('id', $this->get('session')->get('tenant')->getId());
+        // $tenantQuery = new \Elastica\Query\Term();
+        // $tenantQuery->setTerm('id', $this->get('session')->get('tenant')->getId());
 
 
-        $nestedQuery = new \Elastica\Query\Nested();
-        $nestedQuery->setPath('tenant');
-        $nestedQuery->setQuery($tenantQuery);
-        $boolQuery->addMust($nestedQuery);
+        // $nestedQuery = new \Elastica\Query\Nested();
+        // $nestedQuery->setPath('tenant');
+        // $nestedQuery->setQuery($tenantQuery);
+        // $boolQuery->addMust($nestedQuery);
 
         $results = $finder->find($boolQuery);
 
@@ -111,7 +111,6 @@ class DefaultController extends Controller
 
         $tenantQuery = new \Elastica\Query\Term();
         $tenantQuery->setTerm('id', $this->get('session')->get('tenant')->getId());
-
 
         $nestedQuery = new \Elastica\Query\Nested();
         $nestedQuery->setPath('tenant');
