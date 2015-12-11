@@ -14,17 +14,79 @@ use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
+use FOS\UserBundle\Event\UserEvent;
+use AppBundle\Entity\Invitation;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Hip\MandrillBundle\Message;
 
 /**
  * @Route("/")
  */
 class RegistrationController extends Controller
 {
+
     /**
-     * @Route("/client/signup", name="client_signup")
+     * @Route("/app/user/create-invite", name="create_invitation")
+     */
+    public function createInvitationAction(Request $request)
+    {
+        $email = $request->request->get('email_for_invite');
+
+        $userManager = $this->get('fos_user.user_manager');
+        $user        = $userManager->findUserByEmail($email);
+
+        if ($user != null) //existing user
+        {
+            return;
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $invitation = new Invitation();
+        $invitation->setEmail($email);
+        $tenant = $em->getRepository('AppBundle:Tenant')->find($this->get('session')->get('tenant')->getId());
+        $invitation->setTenant($tenant);
+
+        $em->persist($invitation);
+        $em->flush();
+
+        $engine = $this->get('templating');
+        $html = $engine->render('AppBundle:Email:invitation.html.twig', [
+                'invitation' => $invitation,
+                'user'       => $user = $this->get('security.context')->getToken()->getUser(),
+                'permalink'  => $this->generateUrl('user_signup_with_invite', [], true) . "?invitation=" . $invitation->getCode()
+            ]);
+
+        $message = new Message();
+        $message
+            ->setFromName($request->getSession()->get('tenant'))
+            ->addTo($invitation->getEmail())
+            ->setSubject('Invitation from ' . $invitation->getTenant())
+            ->setHtml($html);
+
+        $result = $this->get('hip_mandrill.dispatcher')->send($message);
+
+        return new JsonResponse(['success' => true, 'invitation' => $invitation->getCode(), 'email' => $email]);
+    }
+
+    /**
+     * @Route("/client/signup/tenant", name="user_signup_with_tenant")
      * @Template("AppBundle:Registration:tenant_signup.html.twig")
      */
-    public function tenantSignupAction(Request $request)
+    public function registerWithTenantAction(Request $request)
+    {
+        return $this->register($request, 'app.form.tenant_registration');
+    }
+
+    /**
+     * @Route("/client/signup/invite", name="user_signup_with_invite")
+     * @Template("AppBundle:Registration:tenant_signup.html.twig")
+     */
+    public function registerWithInviteAction(Request $request)
+    {
+        return $this->register($request, 'app.form.registration.invite');
+    }
+
+    private function register(Request $request, $form_name)
     {
         $user = $this->getUser();
         if (is_object($user) and $user instanceof UserInterface)
@@ -40,6 +102,21 @@ class RegistrationController extends Controller
         $user = $userManager->createUser();
         $user->setEnabled(true);
 
+        // for registration with invite
+        if ($request->query->get('invitation', null) != null)
+        {
+            $invitation = $this->getDoctrine()
+                        ->getRepository('AppBundle:Invitation')
+                        ->find(['code' => $request->query->get('invitation')]);
+
+            if ($invitation != null)
+            {
+                $user->setEmail($invitation->getEmail());
+                $user->setInvitation($invitation);
+                $user->addUserTenant($invitation->getTenant());
+            }
+        }
+
         $event = new GetResponseUserEvent($user, $request);
         $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
 
@@ -48,7 +125,7 @@ class RegistrationController extends Controller
             return $event->getResponse();
         }
 
-        $form = $this->get('app.form.tenant_registration')->setData($user);
+        $form = $this->get($form_name)->setData($user);
 
         $form->handleRequest($request);
 
@@ -57,6 +134,7 @@ class RegistrationController extends Controller
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
 
+            $user->getUserTenants()->first()->setOwner($user);
             $userManager->updateUser($user);
 
             if (null === $response = $event->getResponse()) {
@@ -103,7 +181,8 @@ class RegistrationController extends Controller
 
         $user = $userManager->findUserByConfirmationToken($token);
 
-        if (null === $user) {
+        if (null === $user)
+        {
             throw new NotFoundHttpException(sprintf('The user with confirmation token "%s" does not exist', $token));
         }
 
@@ -141,7 +220,7 @@ class RegistrationController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $url = $this->generateUrl('dashboard');
+        $url = $this->generateUrl('fos_user_security_logout');
         $response = new RedirectResponse($url);
 
         return $response;

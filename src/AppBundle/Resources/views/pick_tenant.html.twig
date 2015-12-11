@@ -3,7 +3,15 @@
 
 {% block pageclass %}tenants{% endblock %}
 {% block body %}
-	{% for tenant in tenants %}
-		<a href="{{ path('dashboard') }}?tenant_id={{ tenant.id }}">{{ tenant }}</a>
-	{% endfor %}
+<div class="row">
+<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-6">
+<div class="list-group">
+{% for tenant in tenants %}
+  <a href="{{ path('dashboard') }}?tenant_id={{ tenant.id }}" class="list-group-item">
+    {{ tenant }}
+  </a>
+{% endfor %}
+</div>
+</div>
+</div>
 {% endblock %}

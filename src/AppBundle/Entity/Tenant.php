@@ -140,5 +140,15 @@ class Tenant
 
         return $this;
     }
+
+    /**
+     * Gets the value of users.
+     *
+     * @return \Doctrine\Common\Collections\Collection|User[]
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
 }
 

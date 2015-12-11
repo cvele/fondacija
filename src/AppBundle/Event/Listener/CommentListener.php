@@ -113,6 +113,7 @@ class CommentListener
 
             $message = new Message();
             $message
+                ->setFromName($request->getSession()->get('tenant'))
                 ->addTo($mentioned_user->getEmail())
                 ->setSubject('New note for '.$contact->getLastname().", ".$contact->getFirstname())
                 ->setHtml($html);
@@ -166,6 +167,7 @@ class CommentListener
 
             $message = new Message();
             $message
+                ->setFromName($request->getSession()->get('tenant'))
                 ->addTo($mentioned_user->getEmail())
                 ->setSubject('New note for document ' . $document->getTitle())
                 ->setHtml($html);

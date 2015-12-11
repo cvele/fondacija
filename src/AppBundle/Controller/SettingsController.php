@@ -20,12 +20,13 @@ class SettingsController extends Controller
 
     /**
      * @Route("/users", name="user_settings")
-     * @Template("AppBundle:Settings:user.html.twig")
+     * @Template("AppBundle:Settings:user_list.html.twig")
      */
-    public function userSettingsAction(Request $request)
+    public function userListAction(Request $request)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
-        $tenant = $this->get('session')->get('tenant');
+        $user   = $this->get('security.context')->getToken()->getUser();
+        $em     = $this->getDoctrine()->getManager();
+        $tenant = $em->getRepository('AppBundle:Tenant')->find($this->get('session')->get('tenant')->getId());
 
         return ['tenant' => $tenant];
 

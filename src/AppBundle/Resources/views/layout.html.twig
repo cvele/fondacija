@@ -69,6 +69,11 @@
                             <li>
                                 <a href="{{ path('user_settings') }}">Manage Users</a>
                             </li>
+
+                            <li class="tq">Account</li>
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                <li><a href="{{ path('fos_user_security_logout') }}">Logout</a></li>
+                            {% endif %}
                         </ul>
                         <hr class="rw aky">
                     </div>
