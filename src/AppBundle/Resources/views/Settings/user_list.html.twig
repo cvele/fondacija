@@ -1,0 +1,62 @@
+{% extends "AppBundle::layout.html.twig" %}
+
+{% block subheader_small_title %}Settings{% endblock %}
+{% block subheader_big_title %}List users{% endblock %}
+
+{% block subheader_actions %}
+{% endblock %}
+
+{% block body %}
+<form method="post" id="invitation-form" style="margin-bottom:20px">
+  <div class="row">
+    <div class="col-xs-10">
+      <input type="email" name="email_for_invite" class="form-control">
+    </div>
+    <div class="col-xs-2">
+      <button class="ce apn" type="submit">Send Invitation</button>
+    </div>
+  </div>
+</form>
+
+<div class="ud">
+  <div class="eg">
+    <table class="cl" data-sort="table">
+      <thead>
+        <tr>
+          <th class="header"><input type="checkbox" class="aqn" id="selectAll"></th>
+          <th class="header">Username</th>
+          <th class="header">E-Mail</th>
+          <th class="header">Status</th>
+          <th class="header">Created</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for user in tenant.users %}
+        <tr data-id="{{ user.id }}" class="user-row">
+          <td><input type="checkbox" class="aqo user-checkbox" data-id="{{ user.id }}"></td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td><span class="label label-default">{% if tenant.owner and tenant.owner.id == user.id %}owner{% else %}user{% endif %}</span></td>
+          <td>{{ user.createdAt|date("d.m.Y H:i") }}</td>
+        </tr>
+       {% endfor %}
+        </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#invitation-form').on('submit', function(e){
+      e.preventDefault();
+      $.post('{{ path("create_invitation") }}', $('#invitation-form').serialize(), function(response){
+        $(this)[0].reset();
+        console.log(response);
+      });
+    });
+  });
+</script>
+{% endblock %}
