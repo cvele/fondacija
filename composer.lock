@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0fab6266ca82f7fe4811b1a4b07c5432",
-    "content-hash": "84f9acbd10bdc055ac4d7da95089d0c2",
+    "hash": "e8dcc9a99909c51ddd94644156fa342b",
+    "content-hash": "58dc1bca57903aab038d6388da9734ba",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -49,16 +49,16 @@
         },
         {
             "name": "cvele/multitenant-bundle",
-            "version": "v0.1-alpha",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cvele/MultiTenantBundle.git",
-                "reference": "017149f57d876c9f235b90200060732b99d55347"
+                "reference": "79c0161279bc1fdb670ba4197940fa35d1492c57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cvele/MultiTenantBundle/zipball/017149f57d876c9f235b90200060732b99d55347",
-                "reference": "017149f57d876c9f235b90200060732b99d55347",
+                "url": "https://api.github.com/repos/cvele/MultiTenantBundle/zipball/79c0161279bc1fdb670ba4197940fa35d1492c57",
+                "reference": "79c0161279bc1fdb670ba4197940fa35d1492c57",
                 "shasum": ""
             },
             "require": {
@@ -94,7 +94,7 @@
             "keywords": [
                 "User multitenancy"
             ],
-            "time": "2016-02-19 11:18:51"
+            "time": "2016-02-27 14:22:50"
         },
         {
             "name": "doctrine/annotations",
@@ -3839,7 +3839,7 @@
         "stof/doctrine-extensions-bundle": 0,
         "friendsofsymfony/comment-bundle": 0,
         "white-october/pagerfanta-bundle": 0,
-        "cvele/multitenant-bundle": 15,
+        "cvele/multitenant-bundle": 20,
         "enzim/tika-wrapper": 20
     },
     "prefer-stable": false,

@@ -28,7 +28,7 @@
         "friendsofsymfony/elastica-bundle": "~3.0",
         "oneup/uploader-bundle": "~1.3",
         "igorw/file-serve-bundle": "~1.0",
-        "cvele/multitenant-bundle": "0.1-alpha",
+        "cvele/multitenant-bundle": "dev-master",
         "enzim/tika-wrapper": "dev-master"
     },
     "require-dev": {
