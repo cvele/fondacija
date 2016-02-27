@@ -315,6 +315,10 @@ class Document implements TenantAwareEntityInterface
 
     public function fileText()
     {
+        if (!$metadata)
+        {
+          return null;
+        }
         return $this->metadata->getText();
     }
 
