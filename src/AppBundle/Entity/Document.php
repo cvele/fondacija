@@ -313,7 +313,7 @@ class Document implements TenantAwareEntityInterface
         return $this;
     }
 
-    public function getEncodedFile()
+    public function fileText()
     {
         return $this->metadata->getText();
     }

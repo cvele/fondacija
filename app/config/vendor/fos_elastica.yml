@@ -12,8 +12,7 @@ fos_elastica:
                         description: ~
                         mimeType: ~
                         originalFileName: ~
-                        encodedFile:
-                            type: attachment
+                        fileText: ~
                         tenant:
                             type: "nested"
                             properties:
