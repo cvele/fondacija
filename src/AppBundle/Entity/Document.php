@@ -315,7 +315,7 @@ class Document implements TenantAwareEntityInterface
 
     public function fileText()
     {
-        if (!$metadata)
+        if (!$this->metadata)
         {
           return null;
         }
