@@ -28,6 +28,7 @@ class AppKernel extends Kernel
             new FOS\ElasticaBundle\FOSElasticaBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),
             new Igorw\FileServeBundle\IgorwFileServeBundle(),
+            new Cvele\MultiTenantBundle\MultiTenantBundle(),
             new AppBundle\AppBundle(),
         );
 

@@ -3,12 +3,14 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
+use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user_invitations")
  */
-class Invitation
+class Invitation implements TenantAwareEntityInterface
 {
     /**
      * @ORM\Id
@@ -30,7 +32,7 @@ class Invitation
      */
     protected $sent = false;
 
-    use \AppBundle\Traits\Entity\TenantTrait;
+    use TenantAwareEntityTrait;
 
     public function __construct()
     {

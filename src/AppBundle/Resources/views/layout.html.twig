@@ -43,7 +43,7 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="switchAccountMenu">
                                 {% for userTenant in app.user.userTenants %}
-                                    <li{% if userTenant.id == app.session.get('tenant').id %} class="active"{% endif %}><a href="?tenant_id={{ userTenant.id }}">{{ userTenant }}</a></li>
+                                    <li{% if userTenant.id == app.session.get('tenant_id') %} class="active"{% endif %}><a href="?tenant_id={{ userTenant.id }}">{{ userTenant }}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>

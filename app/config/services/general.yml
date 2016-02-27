@@ -15,3 +15,6 @@ services:
              - @hip_mandrill.dispatcher
              - @app.hip_mandrill.message
              - { confirmation.template: %fos_user.registration.confirmation.template%, resetting_password.template: %fos_user.resetting.email.template% }
+
+    fos_user.doctrine_registry:
+        alias: doctrine

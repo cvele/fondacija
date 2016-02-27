@@ -24,9 +24,9 @@ class SettingsController extends Controller
      */
     public function userListAction(Request $request)
     {
-        $user   = $this->get('security.context')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         $em     = $this->getDoctrine()->getManager();
-        $tenant = $em->getRepository('AppBundle:Tenant')->find($this->get('session')->get('tenant')->getId());
+        $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
 
         return ['tenant' => $tenant];
 

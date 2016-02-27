@@ -43,7 +43,7 @@ class RegistrationController extends Controller
         $em = $this->getDoctrine()->getManager();
         $invitation = new Invitation();
         $invitation->setEmail($email);
-        $tenant = $em->getRepository('AppBundle:Tenant')->find($this->get('session')->get('tenant')->getId());
+        $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
         $invitation->setTenant($tenant);
 
         $em->persist($invitation);
@@ -52,7 +52,7 @@ class RegistrationController extends Controller
         $engine = $this->get('templating');
         $html = $engine->render('AppBundle:Email:invitation.html.twig', [
                 'invitation' => $invitation,
-                'user'       => $user = $this->get('security.context')->getToken()->getUser(),
+                'user'       => $this->get('security.token_storage')->getToken()->getUser(),
                 'permalink'  => $this->generateUrl('user_signup_with_invite', [], true) . "?invitation=" . $invitation->getCode()
             ]);
 

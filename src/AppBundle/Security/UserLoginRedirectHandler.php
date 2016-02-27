@@ -3,7 +3,6 @@
 namespace AppBundle\Security;
 
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
-use FOS\UserBundle\FOSUserEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\SecurityContext;

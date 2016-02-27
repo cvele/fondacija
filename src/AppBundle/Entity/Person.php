@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
+use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
 
 /**
  * Person
@@ -11,7 +13,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ORM\Table(name="company_persons")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\PersonRepository")
  */
-class Person
+class Person implements TenantAwareEntityInterface
 {
     /**
      * @var integer
@@ -92,7 +94,7 @@ class Person
 
     use TimestampableEntity;
 
-    use \AppBundle\Traits\Entity\TenantTrait;
+    use TenantAwareEntityTrait;
 
     /**
      * Get id

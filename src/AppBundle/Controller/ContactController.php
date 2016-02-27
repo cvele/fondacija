@@ -25,7 +25,7 @@ class ContactController extends Controller
     {
         $q = $this->getDoctrine()
                     ->getRepository('AppBundle:Person')
-                    ->findAllQuery($this->get('session')->get('tenant'));
+                    ->findAllQuery($this->get('session')->get('tenant_id'));
 
         $adapter = new DoctrineORMAdapter($q);
 
@@ -59,7 +59,7 @@ class ContactController extends Controller
                 continue;
             }
 
-            if (!$this->get('app.helper.tenant')->isTenantObjectOwner($contact))
+            if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($contact))
             {
                 throw new AccessDeniedException();
             }
@@ -85,12 +85,12 @@ class ContactController extends Controller
         $form = $this->get('app.form.person')->setData($person);
         $form->handleRequest($request);
 
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
         if ($form->isValid())
         {
             $em = $this->getDoctrine()->getManager();
-            $tenant = $em->getRepository('AppBundle:Tenant')->find($this->get('session')->get('tenant')->getId());
+            $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
             $person->setUser($user);
             $person->setTenant($tenant);
             $em->persist($person);
@@ -112,7 +112,7 @@ class ContactController extends Controller
      */
     public function editCompanyAction(Person $contact, Request $request)
     {
-        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($contact))
+        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($contact))
         {
             throw new AccessDeniedException();
         }
@@ -142,7 +142,7 @@ class ContactController extends Controller
      */
     public function showContactAction(Person $contact, Request $request)
     {
-        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($contact))
+        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($contact))
         {
             throw new AccessDeniedException();
         }

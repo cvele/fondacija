@@ -13,6 +13,7 @@ imports:
     - { resource: vendor/gravatar.yml }
     - { resource: vendor/fos_elastica.yml }
     - { resource: vendor/oneup_uploader.yml }
+    - { resource: vendor/cvele_tenant.yml }
 
 
 # Put parameters here that don't need to change on each machine where the app is deployed

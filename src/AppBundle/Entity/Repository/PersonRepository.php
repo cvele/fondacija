@@ -11,18 +11,18 @@ use AppBundle\Entity\Tenant;
  */
 class PersonRepository extends \Doctrine\ORM\EntityRepository
 {
-	public function findAllQuery(Tenant $tenant)
+	public function findAllQuery($tenantId)
 	{
 		return $this->getEntityManager()
-            ->createQuery('SELECT c FROM AppBundle:Person c where c.tenant = :tenant ORDER BY c.lastname, c.firstname ASC')
-            ->setParameter('tenant', $tenant->getId());
+            ->createQuery('SELECT c FROM AppBundle:Person c where c.tenant = :tenantid ORDER BY c.lastname, c.firstname ASC')
+            ->setParameter('tenantid', $tenantId);
 	}
 
-	public function findNum(Tenant $tenant)
+	public function findNum($tenantId)
 	{
 		return $this->getEntityManager()
-            ->createQuery('SELECT count(c) FROM AppBundle:Person c where c.tenant = :tenant')
-            ->setParameter('tenant', $tenant->getId())
+            ->createQuery('SELECT count(c) FROM AppBundle:Person c where c.tenant = :tenantid')
+            ->setParameter('tenantid', $tenantId)
             ->getSingleResult()[1];
 	}
 }

@@ -32,14 +32,14 @@ class DefaultController extends Controller
         $fieldQuery->setQuery($request->query->get('term')."*");
         $boolQuery->addMust($fieldQuery);
 
-        // $tenantQuery = new \Elastica\Query\Term();
-        // $tenantQuery->setTerm('id', $this->get('session')->get('tenant')->getId());
+        $tenantQuery = new \Elastica\Query\Term();
+        $tenantQuery->setTerm('id', $this->get('session')->get('tenant_id'));
 
 
-        // $nestedQuery = new \Elastica\Query\Nested();
-        // $nestedQuery->setPath('tenant');
-        // $nestedQuery->setQuery($tenantQuery);
-        // $boolQuery->addMust($nestedQuery);
+        $nestedQuery = new \Elastica\Query\Nested();
+        $nestedQuery->setPath('tenant');
+        $nestedQuery->setQuery($tenantQuery);
+        $boolQuery->addMust($nestedQuery);
 
         $results = $finder->find($boolQuery);
 
@@ -64,7 +64,7 @@ class DefaultController extends Controller
      */
     public function pickTenantAction(Request $request)
     {
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
         return ['tenants' => $user->getUserTenants()];
 
@@ -78,15 +78,15 @@ class DefaultController extends Controller
     {
         $personsNm = $this->getDoctrine()
                     ->getRepository('AppBundle:Person')
-                    ->findNum($this->get('session')->get('tenant'));
+                    ->findNum($this->get('session')->get('tenant_id'));
 
         $companiesNm = $this->getDoctrine()
                     ->getRepository('AppBundle:Company')
-                    ->findNum($this->get('session')->get('tenant'));
+                    ->findNum($this->get('session')->get('tenant_id'));
 
         $documentsNm = $this->getDoctrine()
                     ->getRepository('AppBundle:Document')
-                    ->findNum($this->get('session')->get('tenant'));
+                    ->findNum($this->get('session')->get('tenant_id'));
 
         return ['companiesNm' => $companiesNm, 'personsNm' => $personsNm, 'documentsNm' => $documentsNm];
 
@@ -110,7 +110,7 @@ class DefaultController extends Controller
         $boolQuery->addMust($fieldQuery);
 
         $tenantQuery = new \Elastica\Query\Term();
-        $tenantQuery->setTerm('id', $this->get('session')->get('tenant')->getId());
+        $tenantQuery->setTerm('id', $this->get('session')->get('tenant_id'));
 
         $nestedQuery = new \Elastica\Query\Nested();
         $nestedQuery->setPath('tenant');

@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
+use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
 
 /**
  * Document
@@ -11,7 +13,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ORM\Table(name="documents")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\DocumentRepository")
  */
-class Document
+class Document implements TenantAwareEntityInterface
 {
     /**
      * @var integer
@@ -76,9 +78,14 @@ class Document
      */
     private $user;
 
+    /**
+     * @ORM\OneToOne(targetEntity="DocumentMetadata", mappedBy="document", fetch="EXTRA_LAZY")
+     */
+    private $metadata;
+
     use TimestampableEntity;
 
-    use \AppBundle\Traits\Entity\TenantTrait;
+    use TenantAwareEntityTrait;
 
     /**
      * Get id
@@ -281,5 +288,34 @@ class Document
 
         return $this;
     }
-}
 
+    /**
+     * Get the value of Metadata
+     *
+     * @return mixed
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * Set the value of Metadata
+     *
+     * @param mixed metadata
+     *
+     * @return self
+     */
+    public function setMetadata(DocumentMetadata $metadata)
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function getEncodedFile()
+    {
+        return $this->metadata->getText();
+    }
+
+}

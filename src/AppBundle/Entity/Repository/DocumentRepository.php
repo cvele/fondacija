@@ -7,18 +7,18 @@ use AppBundle\Entity\Tenant;
 
 class DocumentRepository extends \Doctrine\ORM\EntityRepository
 {
-	public function findAllQuery(Tenant $tenant)
+	public function findAllQuery($tenantId)
 	{
 		return $this->getEntityManager()
             ->createQuery('SELECT c FROM AppBundle:Document c where c.tenant = :tenant ORDER BY c.title ASC')
-            ->setParameter('tenant', $tenant->getId());
+            ->setParameter('tenant', $tenantId);
 	}
 
-	public function findNum(Tenant $tenant)
+	public function findNum($tenantId)
 	{
 		return $this->getEntityManager()
             ->createQuery('SELECT count(c) FROM AppBundle:Document c where c.tenant = :tenant')
-            ->setParameter('tenant', $tenant->getId())
+            ->setParameter('tenant', $tenantId)
             ->getSingleResult()[1];
 	}
 }

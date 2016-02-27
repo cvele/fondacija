@@ -7,13 +7,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Cvele\MultiTenantBundle\Model\Traits\TenantAwareUserTrait;
+use Cvele\MultiTenantBundle\Model\TenantAwareUserInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="users")
  */
-class User extends BaseUser
+class User extends BaseUser implements TenantAwareUserInterface
 {
+    use TenantAwareUserTrait;
+    use TimestampableEntity;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -36,30 +41,18 @@ class User extends BaseUser
      */
     private $documents;
 
-    use TimestampableEntity;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection|UserTenants[]
-     *
-     * @ORM\ManyToMany(targetEntity="Tenant", inversedBy="users", cascade={"persist"})
-     * @ORM\JoinTable(
-     *  name="tenant_users",
-     *  joinColumns={
-     *      @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     *  },
-     *  inverseJoinColumns={
-     *      @ORM\JoinColumn(name="tenant_id", referencedColumnName="id")
-     *  }
-     * )
-     */
-    protected $userTenants;
-
     /**
      * @ORM\OneToOne(targetEntity="Invitation")
      * @ORM\JoinColumn(referencedColumnName="code")
      * @Assert\NotNull(message="Your invitation is wrong", groups={"Registration"})
      */
     protected $invitation;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setupTenantAwareUserTrait();
+    }
 
     public function setInvitation(Invitation $invitation)
     {
@@ -69,15 +62,6 @@ class User extends BaseUser
     public function getInvitation()
     {
         return $this->invitation;
-    }
-
-    /**
-     * Default constructor, initializes collections
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->userTenants = new ArrayCollection();
     }
 
     /**
@@ -108,43 +92,5 @@ class User extends BaseUser
     public function getDocuments()
     {
         return $this->documents;
-    }
-
-    public function setTenant(Tenant $tenant)
-    {
-        $this->addUserTenant($tenant);
-    }
-
-    public function getTenant()
-    {
-        return $this->userTenants[0];
-    }
-
-    public function getUserTenants()
-    {
-        return $this->userTenants;
-    }
-
-    /**
-     * @param Tenant $tenant
-     */
-    public function addUserTenant(Tenant $tenant)
-    {
-        if ($this->userTenants->contains($tenant)) {
-            return;
-        }
-        $this->userTenants->add($tenant);
-        $tenant->addUser($this);
-    }
-    /**
-     * @param Tenant $tenant
-     */
-    public function removeUserGroup(Tenant $tenant)
-    {
-        if (!$this->userTenants->contains($tenant)) {
-            return;
-        }
-        $this->userTenants->removeElement($tenant);
-        $tenant->removeUser($this);
     }
 }

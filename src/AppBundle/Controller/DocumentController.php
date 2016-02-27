@@ -40,7 +40,7 @@ class DocumentController extends Controller
                 continue;
             }
 
-            if (!$this->get('app.helper.tenant')->isTenantObjectOwner($document))
+            if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($document))
             {
                 throw new AccessDeniedException();
             }
@@ -63,7 +63,7 @@ class DocumentController extends Controller
     {
         $q = $this->getDoctrine()
                     ->getRepository('AppBundle:Document')
-                    ->findAllQuery($this->get('session')->get('tenant'));
+                    ->findAllQuery($this->get('session')->get('tenant_id'));
 
         $adapter = new DoctrineORMAdapter($q);
 
@@ -89,7 +89,7 @@ class DocumentController extends Controller
      */
     public function downloadDocumentAction(Document $document, Request $request)
     {
-        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($document))
+        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($document))
         {
             throw new AccessDeniedException();
         }
@@ -108,7 +108,7 @@ class DocumentController extends Controller
      */
     public function showDocumentAction(Document $document, Request $request)
     {
-        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($document))
+        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($document))
         {
             throw new AccessDeniedException();
         }

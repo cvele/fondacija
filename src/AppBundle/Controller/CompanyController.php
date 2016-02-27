@@ -26,7 +26,7 @@ class CompanyController extends Controller
     {
         $companiesQuery = $this->getDoctrine()
                         ->getRepository('AppBundle:Company')
-                        ->findAllQuery($this->get('session')->get('tenant'));
+                        ->findAllQuery($this->get('session')->get('tenant_id'));
 
         $adapter = new DoctrineORMAdapter($companiesQuery);
 
@@ -42,7 +42,7 @@ class CompanyController extends Controller
      */
     public function deleteCompanyAction(Company $company, Request $request)
     {
-        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($company))
+        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
         {
             throw new AccessDeniedException();
         }
@@ -79,7 +79,7 @@ class CompanyController extends Controller
                 continue;
             }
 
-            if (!$this->get('app.helper.tenant')->isTenantObjectOwner($company))
+            if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
             {
                 throw new AccessDeniedException();
             }
@@ -100,7 +100,7 @@ class CompanyController extends Controller
      */
     public function showCompanyAction(Company $company, Request $request)
     {
-        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($company))
+        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
         {
             throw new AccessDeniedException();
         }
@@ -115,7 +115,7 @@ class CompanyController extends Controller
      */
     public function editCompanyAction(Company $company, Request $request)
     {
-        if (!$this->get('app.helper.tenant')->isTenantObjectOwner($company))
+        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
         {
             throw new AccessDeniedException();
         }
@@ -149,12 +149,12 @@ class CompanyController extends Controller
         $form = $this->get('app.form.company')->setData($company);
         $form->handleRequest($request);
 
-        $user = $this->get('security.context')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken()->getUser();
 
         if ($form->isValid())
         {
             $em = $this->getDoctrine()->getManager();
-            $tenant = $em->getRepository('AppBundle:Tenant')->find($this->get('session')->get('tenant')->getId());
+            $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
             $company->setUser($user);
             $company->setTenant($tenant);
             $em->persist($company);
