@@ -1,15 +1,15 @@
 {
-    "name": "symfony-application",
-    "dependencies": {
-        "jquery": "2.1.*",
-        "jquery-ui": "*",
-        "bootstrap": "3.*",
-        "font-awesome": "4.*",
-        "bootstrap-confirmation2": "*",
-        "justgage-toorshia": "*",
-        "Chart.js": "*",
-        "blueimp-file-upload": "*",
-        "jquery-mentions": "1.0.0",
-        "autosize": "*"
-    }
+  "name": "symfony-application",
+  "dependencies": {
+    "jquery": "2.1.*",
+    "angular": "1.5",
+    "angular-cookies": "1.5",
+    "angular-resource": "1.5",
+    "angular-route": "1.5",
+    "cryptojslib": "3.1.2",
+    "angular-local-storage": "~0.2.5",
+    "angular-cache": "~4.5.0",
+    "underscore": "~1.8.3",
+    "bootstrap": "~3.3.6"
+  }
 }

@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: services/security.yml }
     - { resource: services/event.yml }
     - { resource: services/forms.yml }
     - { resource: services/twig.yml }
@@ -9,12 +10,9 @@ imports:
     - { resource: vendor/fos_user.yml }
     - { resource: vendor/fos_comment.yml }
     - { resource: vendor/mandrill.yml }
-    - { resource: vendor/pagerfanta.yml }
-    - { resource: vendor/gravatar.yml }
     - { resource: vendor/fos_elastica.yml }
-    - { resource: vendor/oneup_uploader.yml }
     - { resource: vendor/cvele_tenant.yml }
-
+    - { resource: vendor/oauth.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration

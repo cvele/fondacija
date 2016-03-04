@@ -9,29 +9,25 @@ module.exports = function (grunt) {
             scripts: {
                 files: {
                     'js/jquery.js': 'jquery/dist/jquery.js',
-                    "js/jquery-ui.js": "jquery-ui/jquery-ui.js",
-                    "js/jquery.mentions.js": "jquery-mentions/jquery.mentions.js",
                     'js/bootstrap.js': 'bootstrap/dist/js/bootstrap.js',
-                    'js/bootstrap-confirmation.js': 'bootstrap-confirmation2/bootstrap-confirmation.js',
-                    'js/raphael.js': 'raphael/raphael.js',
-                    'js/justgage.js': 'justgage-toorshia/justgage.js',
-                    'js/Chart.js': 'Chart.js/Chart.js',
-                    "js/jquery.ui.widget.js": "blueimp-file-upload/js/vendor/jquery.ui.widget.js",
-                    "js/jquery.iframe-transport.js": "blueimp-file-upload/js/jquery.iframe-transport.js",
-                    "js/jquery.fileupload.js": "blueimp-file-upload/js/jquery.fileupload.js",
-                    'js/autosize.js': 'autosize/dist/autosize.js'
+                    'js/underscore.js': 'underscore/underscore.js',
+                    'js/sha1.js': 'cryptojslib/rollups/sha1.js',
+                    'js/sha512.js': 'cryptojslib/rollups/sha512.js',
+                    'js/md5.js': 'cryptojslib/rollups/md5.js',
+                    'js/enc-base64.js': 'cryptojslib/components/enc-base64.js',
+                    'js/angular.js': 'angular/angular.js',
+                    'js/angular-cookies.js': 'angular-cookies/angular-cookies.js',
+                    'js/angular-resource.js': 'angular-resource/angular-resource.js',
+                    'js/angular-route.js': 'angular-route/angular-route.js',
+                    'js/angular-local-storage.js': 'angular-local-storage/dist/angular-local-storage.js',
+                    'js/angular-cache.js': 'angular-cache/dist/angular-cache.js'
                 }
             },
             stylesheets: {
                 files: {
                     'css/bootstrap.css': 'bootstrap/dist/css/bootstrap.css',
-                    'css/font-awesome.css': 'font-awesome/css/font-awesome.css',
-                    "css/jquery.fileupload.css": "blueimp-file-upload/css/jquery.fileupload.css"
-                }
-            },
-            fonts: {
-                files: {
-                    'fonts': 'font-awesome/fonts'
+                    'css/bootstrap-theme.css': 'bootstrap/dist/css/bootstrap-theme.css',
+                    'css/angular-csp.css': 'angular/angular-csp.css'
                 }
             }
         },
@@ -55,8 +51,8 @@ module.exports = function (grunt) {
             css: {
                 src: [
                     'web/assets/css/bootstrap.css',
-                    'web/assets/css/font-awesome.css',
-                    "web/assets/css/jquery.fileupload.css",
+                    'web/assets/css/bootstrap-theme.css',
+                    'web/assets/css/angular-csp.css',
                     'src/AppBundle/Resources/css/*.css'
                 ],
                 dest: 'web/assets/css/bundled.css'
@@ -64,18 +60,23 @@ module.exports = function (grunt) {
             js : {
                 src : [
                     'web/assets/js/jquery.js',
-                    "web/assets/js/jquery-ui.js",
-                    "web/assets/js/jquery.mentions.js",
-                    'web/assets/js/bootstrap.js',
-                    'web/assets/js/bootstrap-confirmation.js',
-                    'web/assets/js/raphael.js',
-                    'web/assets/js/justgage.js',
-                    'web/assets/js/chart.js',
-                    "web/assets/js/jquery.ui.widget.js",
-                    "web/assets/js/jquery.iframe-transport.js",
-                    "web/assets/js/jquery.fileupload.js",
-                    "web/assets/js/autosize.js",
-                    'src/AppBundle/Resources/js/*.js'
+                    'web/assets/js/underscore.js',
+                    'web/assets/js/sha1.js',
+                    'web/assets/js/sha512.js',
+                    'web/assets/js/md5.js',
+                    'web/assets/js/enc-base64.js',
+                    'web/assets/js/angular.js',
+                    'web/assets/js/angular-cookies.js',
+                    'web/assets/js/angular-cache.js',
+                    'web/assets/js/angular-local-storage.js',
+                    'web/assets/js/angular-resource.js',
+                    'web/assets/js/angular-route.js',
+                    'src/AppBundle/Resources/js/*.js',
+                    'src/AppBundle/Resources/js/*/*.js',
+                    'src/AppBundle/Resources/js/*/services/*.js',
+                    'src/AppBundle/Resources/js/*/configs/*.js',
+                    'src/AppBundle/Resources/js/*/controller/*.js',
+                    'src/AppBundle/Resources/js/*/global/*.js',
                 ],
                 dest: 'web/assets/js/bundled.js'
             }
@@ -87,13 +88,30 @@ module.exports = function (grunt) {
                 src: '*',
                 dest: 'web/assets/images/'
             },
-            fonts: {
+            glyphicons: {
                 expand: true,
-                cwd: 'src/AppBundle/Resources/fonts',
+                cwd: 'bower_components/bootstrap/dist/fonts/*',
                 src: '*',
                 dest: 'web/assets/fonts/'
             }
-        }
+        },
+        watch: {
+          scripts: {
+            files: [
+              'src/AppBundle/Resources/css/*.css',
+              'src/AppBundle/Resources/js/*.js',
+              'src/AppBundle/Resources/js/*/*.js',
+              'src/AppBundle/Resources/js/*/configs/*.js',
+              'src/AppBundle/Resources/js/*/controller/*.js',
+              'src/AppBundle/Resources/js/*/global/*.js',
+              'src/AppBundle/Resources/js/*/services/*.js',
+            ],
+            tasks: ['watching'],
+            options: {
+              spawn: false,
+            },
+          },
+        },
     });
 
     grunt.loadNpmTasks('grunt-bowercopy');
@@ -101,6 +119,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     grunt.registerTask('default', ['bowercopy','copy', 'concat', 'cssmin', 'uglify']);
+    grunt.registerTask('watching', ['bowercopy','copy', 'concat']);
 };

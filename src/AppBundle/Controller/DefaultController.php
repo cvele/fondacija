@@ -8,9 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use AppBundle\Entity\Company;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Pagerfanta\Pagerfanta;
 
 /**
  * @Route("/")
@@ -125,11 +123,10 @@ class DefaultController extends Controller
 
     /**
      * @Route("/", name="home")
+     * @Template("AppBundle:Default:index.html.twig")
      */
     public function homeAction(Request $request)
     {
-        return $this->redirect($this->generateUrl(
-                'dashboard'
-                ));
+        return [];
     }
 }

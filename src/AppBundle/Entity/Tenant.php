@@ -33,18 +33,12 @@ class Tenant extends BaseTenant
         return $this->id;
     }
 
-    /**
-     * Sets the value of id.
-     *
-     * @param mixed $id the id
-     *
-     * @return self
-     */
-    protected function setId($id)
+    public function toArray()
     {
-        $this->id = $id;
-
-        return $this;
+      return [
+        'id' => $this->getId(),
+        'name' => $this->getName(),
+        'owner' => $this->getOwner()->getId()
+      ];
     }
 }
-

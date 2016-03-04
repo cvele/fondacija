@@ -1,7 +1,0 @@
-{% trans_default_domain 'FOSUserBundle' %}
-{% extends "AppBundle::public_layout.html.twig" %}
-
-{% block pageclass %}signup{% endblock %}
-{% block body %}
-    <p>{{ 'registration.check_email'|trans({'%email%': user.email}) }}</p>
-{% endblock %}

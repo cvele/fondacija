@@ -16,18 +16,19 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            new FOS\UserBundle\FOSUserBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+
+            new FOS\UserBundle\FOSUserBundle(),
             new FOS\RestBundle\FOSRestBundle(),
-            new FOS\CommentBundle\FOSCommentBundle(),
-            new JMS\SerializerBundle\JMSSerializerBundle($this),
-            new Hip\MandrillBundle\HipMandrillBundle(),
-            new WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
-            new Ornicar\GravatarBundle\OrnicarGravatarBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
-            new Oneup\UploaderBundle\OneupUploaderBundle(),
-            new Igorw\FileServeBundle\IgorwFileServeBundle(),
+            new FOS\CommentBundle\FOSCommentBundle(),
+            new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
+
+            new JMS\SerializerBundle\JMSSerializerBundle(),
+
+            new Hip\MandrillBundle\HipMandrillBundle(),
+
             new Cvele\MultiTenantBundle\MultiTenantBundle(),
             new AppBundle\AppBundle(),
         );

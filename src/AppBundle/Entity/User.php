@@ -93,4 +93,19 @@ class User extends BaseUser implements TenantAwareUserInterface
     {
         return $this->documents;
     }
+
+    public function toArray()
+    {
+      $tenants = [];
+      foreach($this->getUserTenants() as $tenant) {
+        $tenants[] = $tenant->toArray();
+      }
+
+      return [
+        'id'        => $this->getId(),
+        'username'  => $this->getUsername(),
+        'tenants'   => $tenants,
+        'email'     => $this->getEmail()
+      ];
+    }
 }

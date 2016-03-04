@@ -35,7 +35,6 @@ class ContactController extends Controller
         return ['contacts' => $contacts];
     }
 
-
     /**
      * @Route("/delete-multiple", name="contacts_delete_multiple", options={"expose"=true})
      */
@@ -92,7 +91,6 @@ class ContactController extends Controller
             $em = $this->getDoctrine()->getManager();
             $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
             $person->setUser($user);
-            $person->setTenant($tenant);
             $em->persist($person);
             $em->flush();
 

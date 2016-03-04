@@ -1,12 +1,5 @@
 <?php
 
-/*
- * This file is part of the Wrep\FOSUserBundleMandrillMailer
- *
- * (c) Rick Pastoor <rick@wrep.nl>
- *
- */
-
 namespace AppBundle\Mailer;
 
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface,

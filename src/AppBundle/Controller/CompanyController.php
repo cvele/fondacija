@@ -3,169 +3,66 @@
 namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use AppBundle\Entity\Company;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Pagerfanta\Pagerfanta;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 
 /**
- * @Route("/app/company")
+ * @Route("/api/company")
  */
-class CompanyController extends Controller
+class CompanyController extends RestController
 {
     /**
-     * @Route("/list", name="company_list")
-     * @Template("AppBundle:Company:list.html.twig")
+     * @Route("", name="api_company_list")
+     * @Method({"GET"})
      */
-    public function listCompanyAction(Request $request)
+    public function listAction()
     {
-        $companiesQuery = $this->getDoctrine()
-                        ->getRepository('AppBundle:Company')
-                        ->findAllQuery($this->get('session')->get('tenant_id'));
-
-        $adapter = new DoctrineORMAdapter($companiesQuery);
-
-        $companies = new Pagerfanta($adapter);
-        $companies->setMaxPerPage(20);
-
-        return ['companies' => $companies];
+        return parent::listAction();
     }
 
     /**
-     * @Route("/{id}/delete", name="company_delete")
-     * @ParamConverter("company", class="AppBundle:Company")
+     * @Route("/{id}", name="api_company_read")
+     * @Method({"GET"})
      */
-    public function deleteCompanyAction(Company $company, Request $request)
+    public function readAction($id)
     {
-        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
-        {
-            throw new AccessDeniedException();
-        }
-
-        $em = $this->getDoctrine()->getEntityManager();
-        $em->remove($company);
-        $em->flush();
-
-        return $this->redirect($this->generateUrl(
-                'company_list'
-            ));
+        return parent::readAction($id);
     }
 
     /**
-     * @Route("/company/delete-multiple", name="company_delete_multiple", options={"expose"=true})
+     * @Route("", name="api_company_create")
+     * @Method({"POST"})
      */
-    public function deleteCompaniesAction(Request $request)
+    public function createAction()
     {
-        $ids  = $request->request->get('ids');
-        $em   = $this->getDoctrine()->getEntityManager();
-        $repo = $this->getDoctrine()->getRepository('AppBundle:Company');
-
-        if (!is_array($ids))
-        {
-            return new JsonResponse(['deleted' => []]);
-        }
-
-        $deleted = [];
-        foreach ($ids as $key => $id) {
-            $company = $repo->findOneBy(['id'=>$id]);
-
-            if ($company == null)
-            {
-                continue;
-            }
-
-            if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
-            {
-                throw new AccessDeniedException();
-            }
-
-            $em->remove($company);
-            $em->flush();
-
-            $deleted[] = $id;
-        }
-
-        return new JsonResponse(['deleted' => $deleted]);
+        return parent::createAction();
     }
 
     /**
-     * @Route("/{id}/show", name="company_show")
-     * @Template("AppBundle:Company:show.html.twig")
-     * @ParamConverter("company", class="AppBundle:Company")
+     * @Route("/{id}", name="api_company_update")
+     * @Method({"PUT"})
      */
-    public function showCompanyAction(Company $company, Request $request)
+    public function updateAction($id)
     {
-        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
-        {
-            throw new AccessDeniedException();
-        }
-
-        return ['company' => $company];
+        return parent::updateAction($id);
     }
 
     /**
-     * @Route("/{id}/edit", name="company_edit")
-     * @Template("AppBundle:Company:edit.html.twig")
-     * @ParamConverter("company", class="AppBundle:Company")
+     * @see RestController::getRepository()
+     * @return EntityRepository
      */
-    public function editCompanyAction(Company $company, Request $request)
+    public function getRepository()
     {
-        if (!$this->get('multi_tenant.helper')->isTenantObjectOwner($company))
-        {
-            throw new AccessDeniedException();
-        }
-
-        $form = $this->get('app.form.company')->setData($company);
-        $form->handleRequest($request);
-
-        if ($form->isValid())
-        {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($company);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl(
-                'company_show',
-                array('id' => $company->getId())
-            ));
-        }
-
-        return ['form' => $form->createView(), 'company' => $company];
+        return $this->getDoctrine()->getManager()->getRepository('AppBundle:Company');
     }
 
     /**
-     * @Route("/new", name="company_new")
-     * @Template("AppBundle:Company:create.html.twig")
+     * @see RestController::getNewEntity()
+     * @return Object
      */
-    public function createCompanyAction(Request $request)
+    public function getNewEntity()
     {
-        $company = new \AppBundle\Entity\Company();
-
-        $form = $this->get('app.form.company')->setData($company);
-        $form->handleRequest($request);
-
-        $user = $this->get('security.token_storage')->getToken()->getUser();
-
-        if ($form->isValid())
-        {
-            $em = $this->getDoctrine()->getManager();
-            $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
-            $company->setUser($user);
-            $company->setTenant($tenant);
-            $em->persist($company);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl(
-                'company_show',
-                array('id' => $company->getId())
-            ));
-        }
-
-        return ['form'=>$form->createView()];
+        return new Company();
     }
 }

@@ -44,8 +44,6 @@ class RegistrationController extends Controller
         $invitation = new Invitation();
         $invitation->setEmail($email);
         $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
-        $invitation->setTenant($tenant);
-
         $em->persist($invitation);
         $em->flush();
 
@@ -103,14 +101,12 @@ class RegistrationController extends Controller
         $user->setEnabled(true);
 
         // for registration with invite
-        if ($request->query->get('invitation', null) != null)
-        {
+        if ($request->query->get('invitation', null) != null) {
             $invitation = $this->getDoctrine()
                         ->getRepository('AppBundle:Invitation')
                         ->find(['code' => $request->query->get('invitation')]);
 
-            if ($invitation != null)
-            {
+            if ($invitation !== null) {
                 $user->setEmail($invitation->getEmail());
                 $user->setInvitation($invitation);
                 $user->addUserTenant($invitation->getTenant());
@@ -120,8 +116,7 @@ class RegistrationController extends Controller
         $event = new GetResponseUserEvent($user, $request);
         $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
 
-        if (null !== $event->getResponse())
-        {
+        if (null !== $event->getResponse()) {
             return $event->getResponse();
         }
 
@@ -129,8 +124,7 @@ class RegistrationController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isValid())
-        {
+        if ($form->isValid()) {
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
 
