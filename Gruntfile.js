@@ -74,6 +74,7 @@ module.exports = function (grunt) {
                     'src/AppBundle/Resources/js/*.js',
                     'src/AppBundle/Resources/js/*/*.js',
                     'src/AppBundle/Resources/js/*/services/*.js',
+                    'src/AppBundle/Resources/js/*/services/endpoints/*.js',
                     'src/AppBundle/Resources/js/*/configs/*.js',
                     'src/AppBundle/Resources/js/*/controller/*.js',
                     'src/AppBundle/Resources/js/*/global/*.js',
@@ -105,6 +106,7 @@ module.exports = function (grunt) {
               'src/AppBundle/Resources/js/*/controller/*.js',
               'src/AppBundle/Resources/js/*/global/*.js',
               'src/AppBundle/Resources/js/*/services/*.js',
+              'src/AppBundle/Resources/js/*/services/endpoints/*.js'
             ],
             tasks: ['watching'],
             options: {

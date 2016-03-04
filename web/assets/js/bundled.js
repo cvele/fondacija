@@ -45201,7 +45201,7 @@ function ngViewFillContentFactory($compile, $controller, $route) {
     .constant('_', window._)
     .constant('CONST', {
         BACKEND_URL         : 'http://w.local/app_dev.php',
-        API_URL             : 'http://w.local/app_dev.php/api',
+        API_URL             : 'http://w.local/app_dev.php/api/v1',
         OAUTH_CLIENT_ID     : '1_6854cbs0cj8csg8w4ckcs8gsgo0o8cw0ww8wgsgk4gk04w88w0',
         OAUTH_CLIENT_SECRET : '43kwonp0vugw00g4o4ccs0wgokk8cskgo8gkowgcso4808cgws'
     })
@@ -45246,10 +45246,11 @@ function ngViewFillContentFactory($compile, $controller, $route) {
         'Util',
         'CONST',
         'Session',
+        'UserEndpoint',
         Authentication
       ]);
 
-    function Authentication ($rootScope,$http,$q,Util,CONST,Session) {
+    function Authentication ($rootScope,$http,$q,Util,CONST,Session,UserEndpoint) {
         // check whether we have initially an old access_token and userId
         // and assume that, if yes, we are still loggedin
         var loginStatus = !!Session.getSessionDataEntry('accessToken') && !!Session.getSessionDataEntry('userId'),
@@ -45258,10 +45259,8 @@ function ngViewFillContentFactory($compile, $controller, $route) {
         setToLoginState = function (userData) {
             Session.setSessionDataEntries({
                 userId: userData.id,
-                realname: userData.realname,
-                email: userData.email,
-                role: userData.role,
-                permissions: userData.permissions
+                username: userData.username,
+                email: userData.email
             });
 
             loginStatus = true;
@@ -45295,17 +45294,12 @@ function ngViewFillContentFactory($compile, $controller, $route) {
                     var accessToken = authResponse.data.access_token;
                     Session.setSessionDataEntry('accessToken', accessToken);
 
-                    // $http.get(Util.apiUrl('/users/me')).then(
-                    //     function (userDataResponse) {
-                    //         RoleEndpoint.query({name: userDataResponse.data.role}).$promise.then(function (results) {
-                    //             userDataResponse.data.permissions = !_.isEmpty(results) ? results[0].permissions : [];
-                    //             setToLoginState(userDataResponse.data);
-                    //
-                    //             $rootScope.$broadcast('event:authentication:login:succeeded');
-                    //
-                    //             deferred.resolve();
-                    //         });
-                    //     }, handleRequestError);
+                    $http.get(Util.apiUrl('/users/me')).then(
+                    function (userDataResponse) {
+                      setToLoginState(userDataResponse.data);
+                      $rootScope.$broadcast('event:authentication:login:succeeded');
+                      deferred.resolve();
+                    }, handleRequestError);
                 };
 
                 $http.post(Util.url('/oauth/v2/token'), payload).then(handleRequestSuccess, handleRequestError);
@@ -45434,6 +45428,221 @@ function ngViewFillContentFactory($compile, $controller, $route) {
 
         return Util.bindAllFunctionsToSelf(Util);
 
+    }]);
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app')
+    .factory('UserEndpoint', [
+    '$resource',
+    '$rootScope',
+    'Util',
+    'CacheFactory',
+    UserEndpoint
+    ]);
+
+  function UserEndpoint($resource, $rootScope, Util, CacheFactory) {
+      var cache;
+
+      if (!(cache = CacheFactory.get('userCache'))) {
+          cache = new CacheFactory('userCache');
+      }
+
+      cache.setOnExpire(function (key, value) {
+          UserEndpoint.get(value.id);
+      });
+
+      var UserEndpoint = $resource(Util.apiUrl('/users/:id'), {
+          id: '@id'
+      }, {
+          query: {
+              method: 'GET',
+              isArray: false,
+              transformResponse: function (data /*, header*/) {
+                  return angular.fromJson(data);
+              },
+              cache: cache
+          },
+          get: {
+              method: 'GET',
+              cache: cache
+          },
+          update: {
+              method: 'PUT'
+          },
+          deleteEntity: {
+              method: 'DELETE'
+          }
+      });
+
+      UserEndpoint.getFresh = function (id) {
+          cache.remove(Util.apiUrl(id));
+          return UserEndpoint.get(id);
+      };
+
+      UserEndpoint.invalidateCache = function () {
+          return cache.removeAll();
+      };
+
+      UserEndpoint.queryFresh = function (params) {
+          cache.removeAll();
+          return UserEndpoint.query(params);
+      };
+
+      UserEndpoint.saveCache = function (item) {
+          var persist = item.id ? UserEndpoint.update : UserEndpoint.save;
+          cache.removeAll();
+          return persist(item);
+      };
+
+      UserEndpoint.delete = function (item) {
+          cache.removeAll();
+          var result = UserEndpoint.deleteEntity(item);
+          return result;
+      };
+
+      return UserEndpoint;
+  }
+
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('app.security')
+    .config([
+        '$provide',
+        '$httpProvider',
+    function (
+        $provide,
+        $httpProvider
+    ) {
+        // register the interceptor as a service
+        $provide.factory('authInterceptor', [
+            '$rootScope',
+            '$injector',
+            '$q',
+            'CONST',
+            'Session',
+        function (
+            $rootScope,
+            $injector,
+            $q,
+            CONST,
+            Session
+        ) {
+            var getClientCredsToken = function (config) {
+                var
+                deferred = $q.defer(),
+                payload = {
+                    grant_type: 'client_credentials',
+                    client_id: CONST.OAUTH_CLIENT_ID,
+                    client_secret: CONST.OAUTH_CLIENT_SECRET
+                },
+
+                handleRequestSuccess = function (authResponse) {
+                    var accessToken = authResponse.data.access_token;
+                    Session.setSessionDataEntry('accessToken', accessToken);
+                    config.headers.Authorization = 'Bearer ' + accessToken;
+                    deferred.resolve(config);
+                };
+
+                $injector.invoke(['$http', 'Util', function ($http, Util) {
+                    // $http is already constructed at the time and you may
+                    // use it, just as any other service registered in your
+                    // app module and modules on which app depends on.
+                    // http://stackoverflow.com/a/19954545/567126
+                    $http.post(Util.url('/oauth/v2/token'), payload).then(handleRequestSuccess, deferred.reject);
+                }]);
+
+                return deferred.promise;
+            };
+
+            return {
+                request: function (config) {
+
+                    var deferred = $q.defer();
+
+                    if (_.has(config, 'params') && config.params.ignore403) {
+                        delete config.params.ignore403;
+                        config.ignorable = true;
+                    }
+
+                    if (config.url.indexOf(CONST.API_URL) === -1) {
+                        deferred.resolve(config);
+                        return deferred.promise;
+                    }
+
+                    var accessToken = Session.getSessionDataEntry('accessToken');
+
+                    // if we already have an accessToken,
+                    // we will set it straight ahead
+                    // and resolve the promise for the config hash
+                    if (accessToken !== undefined && accessToken !== null) {
+                        config.headers.Authorization = 'Bearer ' + accessToken;
+                        deferred.resolve(config);
+
+                    // otherwise, we will ask the backend
+                    // via the client credentials oauth flow
+                    // for an anonymous accessToken
+                    // (for some resources, of course,
+                    // this authorization level is not enough
+                    // and a 403 or 401 will be thrown
+                    // which results in showing the login page)
+                    } else {
+                        getClientCredsToken(config).then(deferred.resolve, deferred.reject);
+                    }
+                    return deferred.promise;
+                },
+                responseError: function (rejection) {
+                    var deferred = $q.defer();
+
+                    // When a request is rejected there are
+                    // a few possible reasons. If its a 401
+                    // either our token expired, or we didn't have one.
+                    if (rejection.status === 401) {
+                        $injector.invoke(['Authentication', '$http', function (Authentication, $http) {
+                            // Check if were were logged in
+                            if (Authentication.getLoginStatus()) {
+                                // If we were, trigger an unauthorized
+                                // event and show the login page
+                                $rootScope.$broadcast('event:unauthorized');
+                                deferred.reject(rejection);
+                            } else {
+                                // If we weren't logged in to start with
+                                // we probably just need to get a new token
+                                getClientCredsToken(rejection.config).then(
+                                    function (config) {
+                                        deferred.resolve($http(config));
+                                    },
+                                    deferred.reject
+                                );
+                            }
+                        }]);
+                    // If its a 403 we've got a token, but it can't get us what we needed
+                    } else if (rejection.status === 403) {
+                        // In the short term, we will handle failures for
+                        // associated entities - for example posts that contain unviewable tags -
+                        // we will ignore the error. In future this will be rectified under issue:
+                        // https://github.com/ushahidi/platform/issues/793
+                        if (!rejection.config.ignorable) {
+                            // Trigger a forbidden event and show an error page
+                            $rootScope.$broadcast('event:forbidden');
+                        }
+                        deferred.reject(rejection);
+                    // For anything else, just forward the rejection
+                    } else {
+                        deferred.reject(rejection);
+                    }
+                    return deferred.promise;
+                }
+            };
+        }]);
+
+        $httpProvider.interceptors.push('authInterceptor');
     }]);
 
 })();
