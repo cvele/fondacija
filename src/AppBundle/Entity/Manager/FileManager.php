@@ -34,7 +34,7 @@ class FileManager
 		$targetEntity->addFile($entity);
 		$this->om->persist($targetEntity);
 		$this->om->flush();
-		$this->dispatch($event_name, $entity);
+		$this->dispatch($eventName, $entity);
 	}
 
   public function save(File $entity, UploadedFile $file, $eventName = 'app.entity.saved')

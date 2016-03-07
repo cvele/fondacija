@@ -1,5 +1,6 @@
 {
     "name": "vladimir/fondacija",
+    "description": "simple...",
     "license": "proprietary",
     "type": "project",
     "autoload": {

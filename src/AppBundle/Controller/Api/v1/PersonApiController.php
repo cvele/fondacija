@@ -3,8 +3,6 @@
 namespace AppBundle\Controller\Api\v1;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use AppBundle\Entity\Contact;
 
 /**
  * @Route("/api/v1/persons")

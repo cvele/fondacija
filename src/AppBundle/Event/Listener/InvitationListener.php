@@ -45,6 +45,6 @@ class InvitationListener
           ->setSubject('Invitation from ' . $invitation->getTenant())
           ->setHtml($html);
 
-      $result = $mandrillDispatcher->send($message);
+      $mandrillDispatcher->send($message);
     }
 }

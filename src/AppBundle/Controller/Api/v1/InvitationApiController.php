@@ -48,7 +48,7 @@ class InvitationApiController extends RestController
 
       $user = $userManager->findUserByEmail($body->email);
 
-      if ($user != null) { // this is an existing user and we should just add to tenant
+      if ($user !== null) { // this is an existing user and we should just add to tenant
         $tenantHelper->addUserToTenant($user, $tenantHelper->getCurrentTenant());
         return new JsonResponse([], 200);
       }

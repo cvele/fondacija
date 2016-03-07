@@ -3,7 +3,6 @@
 namespace AppBundle\Event\Listener;
 
 use AppBundle\Controller\Api\v1\RestController;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 

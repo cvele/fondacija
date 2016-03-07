@@ -2,9 +2,6 @@
 
 namespace AppBundle\Entity\Repository;
 
-use Pagerfanta\Adapter\DoctrineORMAdapter;
-use AppBundle\Entity\Tenant;
-
 /**
  * OrganizationRepository
  *

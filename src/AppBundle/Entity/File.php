@@ -171,4 +171,26 @@ class File implements TenantAwareEntityInterface
         return $this;
     }
 
+
+    /**
+     * Get the value of Id
+     *
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+
+    /**
+     * Get the value of Path
+     *
+     * @return mixed
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
 }

@@ -4,7 +4,6 @@ namespace AppBundle\Controller\Api\v1;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\NoResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -236,6 +235,7 @@ abstract class RestController extends Controller {
      */
     protected function getEntityForJson($id)
     {
+        $filters = ['id' => $id];
         if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
             $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
             if ($tenant === null) {
@@ -245,10 +245,16 @@ abstract class RestController extends Controller {
         }
 
         try {
-            return $this->getRepository()->createQueryBuilder('e')
-                            ->where('e.id = :id')
-                            ->setParameter('id', $id)
-                            ->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
+            $query = $this->getRepository()->createQueryBuilder('e')
+                            ->where('e.id = :id');
+
+            if (isset($filters['tenant'])) {
+              $query->andWhere('e.tenant = :tenant')
+                ->setParameter('tenant', $tenant);
+            }
+
+            $query->setParameter('id', $id)
+                ->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
         }
         catch (NoResultException $ex) {
             return false;
@@ -287,7 +293,7 @@ abstract class RestController extends Controller {
         }
 
         $data = json_decode($json);
-        if ($data == null) {
+        if ($data === null) {
             return false;
         }
 
