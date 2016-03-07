@@ -59,7 +59,7 @@ class FileApiController extends RestController
         $fileManager->delete($object);
         return new Response([], 204);
     }
-    
+
     /**
      * @see RestController::getRepository()
      * @return EntityRepository

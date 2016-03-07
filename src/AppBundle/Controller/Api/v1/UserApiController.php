@@ -53,7 +53,6 @@ class UserApiController extends RestController
       }
 
       $data = json_decode($json);
-
       $userManager = $this->get('fos_user.user_manager');
       $invitationManager = $this->get('app.manager.invitation');
 
