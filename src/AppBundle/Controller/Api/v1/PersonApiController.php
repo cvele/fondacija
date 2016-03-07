@@ -19,7 +19,7 @@ class PersonApiController extends RestController
      * @see RestController::getRepository()
      * @return EntityRepository
      */
-    public function getRepository()
+    protected function getRepository()
     {
         return $this->get('app.manager.person')->getRepo();
     }
@@ -28,7 +28,7 @@ class PersonApiController extends RestController
      * @see RestController::getNewEntity()
      * @return Object
      */
-    public function getNewEntity()
+    protected function getNewEntity()
     {
         return $this->get('app.manager.person')->createClass();
     }

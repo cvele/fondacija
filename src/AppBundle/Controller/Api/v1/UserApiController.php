@@ -78,7 +78,7 @@ class UserApiController extends RestController
    * @see RestController::getRepository()
    * @return EntityRepository
    */
-  public function getRepository()
+  protected function getRepository()
   {
       return $this->getDoctrine()->getManager()->getRepository('AppBundle:User');
   }
@@ -87,7 +87,7 @@ class UserApiController extends RestController
    * @see RestController::getNewEntity()
    * @return Object
    */
-  public function getNewEntity()
+  protected function getNewEntity()
   {
       return $this->get('fos_user.user_manager')->getClass();
   }
