@@ -6,11 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Cvele\MultiTenantBundle\Model\Tenant as BaseTenant;
+
 /**
  * Tenant
  *
  * @ORM\Table(name="tenants")
- * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\TenantRepository")
  */
 class Tenant extends BaseTenant
 {

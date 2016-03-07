@@ -6,14 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
 use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Person
  *
- * @ORM\Table(name="company_persons")
+ * @ORM\Table(name="persons")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\PersonRepository")
  */
-class Person implements TenantAwareEntityInterface
+class Person implements TenantAwareEntityInterface, AttachableEntityInterface
 {
     /**
      * @var integer
@@ -81,10 +82,10 @@ class Person implements TenantAwareEntityInterface
     private $skype;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Company", inversedBy="persons")
-     * @ORM\JoinColumn(name="company_id", referencedColumnName="id", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Organization", inversedBy="persons")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", nullable=true)
      */
-    private $company;
+    private $organization;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="persons")
@@ -92,9 +93,23 @@ class Person implements TenantAwareEntityInterface
      */
     private $user;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="File")
+     * @ORM\JoinTable(name="person_files",
+     *      joinColumns={@ORM\JoinColumn(name="person_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", unique=true)}
+     *      )
+     */
+    private $files;
+
     use TimestampableEntity;
 
     use TenantAwareEntityTrait;
+
+    public function __construct()
+    {
+        $this->files = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -299,30 +314,6 @@ class Person implements TenantAwareEntityInterface
     }
 
     /**
-     * Set company
-     *
-     * @param integer $company
-     *
-     * @return Person
-     */
-    public function setCompany(Company $company)
-    {
-        $this->company = $company;
-
-        return $this;
-    }
-
-    /**
-     * Get company
-     *
-     * @return integer
-     */
-    public function getCompany()
-    {
-        return $this->company;
-    }
-
-    /**
      * Gets the value of user.
      *
      * @return mixed
@@ -345,5 +336,38 @@ class Person implements TenantAwareEntityInterface
 
         return $this;
     }
-}
 
+    /**
+     * Get the value of Organization
+     *
+     * @return mixed
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * Set the value of Organization
+     *
+     * @param mixed organization
+     *
+     * @return self
+     */
+    public function setOrganization(Organization $organization)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    public function addFile(File $file)
+    {
+        $this->files->add($file);
+    }
+
+    public function removeFile(File $file)
+    {
+        $this->files->removeElement($file);
+    }
+}

@@ -20,10 +20,10 @@ class AppKernel extends Kernel
 
             new FOS\UserBundle\FOSUserBundle(),
             new FOS\RestBundle\FOSRestBundle(),
-            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
-            new FOS\CommentBundle\FOSCommentBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
+
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
 
             new JMS\SerializerBundle\JMSSerializerBundle(),
 

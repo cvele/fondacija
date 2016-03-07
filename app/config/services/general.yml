@@ -1,20 +1,53 @@
+parameters:
+    app.entity.invitation.class: "AppBundle\Entity\Invitation"
+    app.entity.file.class: "AppBundle\Entity\File"
+    app.entity.person.class: "AppBundle\Entity\Person"
+    app.entity.organization.class: "AppBundle\Entity\Organization"
+
 services:
     app.hip_mandrill.message:
-        class: Hip\MandrillBundle\Message
-
-    app.helper.tenant:
-        class: AppBundle\Helper\TenantHelper
-        arguments:
-            - @session
+        class: "Hip\MandrillBundle\Message"
 
     app.fosuserbundlemandrillmailer:
          class: AppBundle\Mailer\FOSUserBundleMailer
          arguments:
-             - @router
-             - @templating
-             - @hip_mandrill.dispatcher
-             - @app.hip_mandrill.message
-             - { confirmation.template: %fos_user.registration.confirmation.template%, resetting_password.template: %fos_user.resetting.email.template% }
+             - "@router"
+             - "@templating"
+             - "@hip_mandrill.dispatcher"
+             - "@app.hip_mandrill.message"
+             - { confirmation.template: "%fos_user.registration.confirmation.template%", resetting_password.template: "%fos_user.resetting.email.template%" }
 
     fos_user.doctrine_registry:
         alias: doctrine
+
+    app.apache_tika:
+        class: "Enzim\Lib\TikaWrapper\TikaWrapper"
+
+    app.manager.organization:
+        class: "AppBundle\Entity\Manager\OrganizationManager"
+        arguments:
+          - "@event_dispatcher"
+          - "@doctrine.orm.entity_manager"
+          - "%app.entity.organization.class%"
+
+    app.manager.person:
+        class: "AppBundle\Entity\Manager\PersonManager"
+        arguments:
+          - "@event_dispatcher"
+          - "@doctrine.orm.entity_manager"
+          - "%app.entity.person.class%"
+
+    app.manager.invitation:
+        class: "AppBundle\Entity\Manager\InvitationManager"
+        arguments:
+          - "@event_dispatcher"
+          - "@doctrine.orm.entity_manager"
+          - "%app.entity.invitation.class%"
+
+    app.manager.file:
+        class: "AppBundle\Entity\Manager\FileManager"
+        arguments:
+          - "@event_dispatcher"
+          - "@doctrine.orm.entity_manager"
+          - "%app.entity.file.class%"
+          - "@stof_doctrine_extensions.uploadable.manager"

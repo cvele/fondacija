@@ -32,14 +32,9 @@ class User extends BaseUser implements TenantAwareUserInterface
     private $persons;
 
     /**
-     * @ORM\OneToMany(targetEntity="Company", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Organization", mappedBy="user")
      */
-    private $companies;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Document", mappedBy="user")
-     */
-    private $documents;
+    private $organizations;
 
     /**
      * @ORM\OneToOne(targetEntity="Invitation")
@@ -74,26 +69,6 @@ class User extends BaseUser implements TenantAwareUserInterface
         return $this->persons;
     }
 
-    /**
-     * Gets the value of companies.
-     *
-     * @return mixed
-     */
-    public function getCompanies()
-    {
-        return $this->companies;
-    }
-
-    /**
-     * Gets the value of documents.
-     *
-     * @return mixed
-     */
-    public function getDocuments()
-    {
-        return $this->documents;
-    }
-
     public function toArray()
     {
       $tenants = [];
@@ -107,5 +82,15 @@ class User extends BaseUser implements TenantAwareUserInterface
         'tenants'   => $tenants,
         'email'     => $this->getEmail()
       ];
+    }
+
+    /**
+     * Get the value of Organizations
+     *
+     * @return mixed
+     */
+    public function getOrganizations()
+    {
+        return $this->organizations;
     }
 }

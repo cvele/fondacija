@@ -11,6 +11,7 @@ use AppBundle\Entity\Document;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/app/document")

@@ -1,6 +1,0 @@
-services:
-    app.twig_extension.bytes.class:
-        class: AppBundle\Twig\FormatBytesExtension
-        public: false
-        tags:
-            - { name: twig.extension }

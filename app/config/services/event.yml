@@ -1,24 +1,8 @@
 services:
-    app.upload_listener:
-        class: AppBundle\Event\Listener\UploadListener
-        arguments:
-            - @doctrine.orm.entity_manager
-            - @security.token_storage
-            - @multi_tenant.helper
-            - %kernel.root_dir%
+    app.http_method_listener:
+        class: AppBundle\Event\Listener\HttpMethodListener
         tags:
-            - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
-
-    app.comment.listener:
-        class: AppBundle\Event\Listener\CommentListener
-        arguments:
-            - @fos_comment.manager.comment
-            - @doctrine.orm.entity_manager
-            - @hip_mandrill.dispatcher
-            - @templating
-        tags:
-            - { name: kernel.event_listener, event: fos_comment.comment.pre_persist, method: onCommentPersist}
-            - { name: kernel.event_listener, event: fos_comment.comment.pre_persist, method: onCommentPrePersist}
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
 
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener
@@ -26,3 +10,15 @@ services:
             - { name: doctrine.event_subscriber, connection: default }
         calls:
             - [ setAnnotationReader, [ @annotation_reader ] ]
+
+    app.entity_event.invitation_listener:
+        class: AppBundle\Event\Listener\InvitationListener
+        arguments: ["@templating", "@multi_tenant.helper", "@hip_mandrill.dispatcher", "@app.hip_mandrill.message"]
+        tags:
+            - { name: kernel.event_listener, event: app.entity.saved, method: sendInvitationEmail }
+
+    app.entity_event.file_attached_listener:
+        class: AppBundle\Event\Listener\FileAttachedListener
+        arguments: ["@app.manager.file", "app.apache_tika"]
+        tags:
+        - { name: kernel.event_listener, event: app.file.attached, method: processApacheTika }

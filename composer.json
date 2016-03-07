@@ -19,17 +19,16 @@
         "sensio/framework-extra-bundle": "^3.0.13",
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
-        "friendsofsymfony/jsrouting-bundle": "~1.5",
         "friendsofsymfony/elastica-bundle": "~3.1.8",
         "friendsofsymfony/rest-bundle": "~1.7.7",
         "friendsofsymfony/comment-bundle": "~2.0.8",
         "friendsofsymfony/oauth-server-bundle": "~1.5.2",
-        "stof/doctrine-extensions-bundle": "~1.2.2",
+        "stof/doctrine-extensions-bundle": "^1.2",
         "hipaway-travel/mandrill-bundle": "1.0.10",
-        "ornicar/gravatar-bundle" : "~1.0",
         "cvele/multitenant-bundle": "dev-master",
         "enzim/tika-wrapper": "dev-master",
-        "jms/serializer-bundle": "^1.1"
+        "jms/serializer-bundle": "^1.1",
+        "nelmio/cors-bundle": "^1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
