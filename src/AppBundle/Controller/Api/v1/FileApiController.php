@@ -16,12 +16,12 @@ class FileApiController extends RestController
      * @see RestController::implementsMethods()
      * @return array
      */
-    public function implementsMethods()
+    protected function implementsMethods()
     {
       return ['POST', 'DELETE', 'OPTIONS'];
     }
 
-    public function scope()
+    protected function scope()
     {
       return 'file';
     }

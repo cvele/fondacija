@@ -96,7 +96,8 @@ class DefaultController extends Controller
     {
         $q = $request->query->get('q');
 
-        $finder = $this->container->get('fos_elastica.finder.app');
+        $finder       = $this->get('fos_elastica.finder.app');
+        $tenantHelper = $this->get('multi_tenant.helper');
 
         $boolQuery = new \Elastica\Query\BoolQuery();
 
@@ -106,7 +107,7 @@ class DefaultController extends Controller
         $boolQuery->addMust($fieldQuery);
 
         $tenantQuery = new \Elastica\Query\Term();
-        $tenantQuery->setTerm('id', $this->get('session')->get('tenant_id'));
+        $tenantQuery->setTerm('id', $tenantHelper->getCurrentTenant()->getId());
 
         $nestedQuery = new \Elastica\Query\Nested();
         $nestedQuery->setPath('tenant');

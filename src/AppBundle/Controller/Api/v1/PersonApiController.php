@@ -10,7 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class PersonApiController extends RestController
 {
 
-    public function scope()
+    protected function scope()
     {
       return 'person';
     }

@@ -16,7 +16,7 @@ class UserApiController extends RestController
    * @see RestController::scope()
    * @return string
    */
-  public function scope()
+  protected function scope()
   {
     return 'user';
   }

@@ -15,7 +15,7 @@ class InvitationApiController extends RestController
    * @see RestController::scope()
    * @return string
    */
-  public function scope()
+  protected function scope()
   {
     return 'invitation';
   }
@@ -24,7 +24,7 @@ class InvitationApiController extends RestController
    * @see RestController::implementsMethods()
    * @return array
    */
-  public function implementsMethods()
+  protected function implementsMethods()
   {
     return ['GET', 'POST', 'DELETE', 'OPTIONS'];
   }
