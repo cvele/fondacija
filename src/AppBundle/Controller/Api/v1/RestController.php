@@ -56,7 +56,7 @@ abstract class RestController extends Controller
 
         $list = $this->getRepository()->findBy($filters);
 
-        return $this->_response($list);
+        return $this->response($list);
     }
 
     /**
@@ -75,12 +75,12 @@ abstract class RestController extends Controller
             throw $this->createNotFoundException();
         }
 
-        return $this->_response($entityInstance);
+        return $this->response($entityInstance);
     }
 
-    protected function _response($data, $httpCode = 200)
+    protected function response($data, $httpCode = 200)
     {
-        $data = $this->get('app.rest_response')->createResponseArray($data, $this->getNewEntity());
+        $data = $this->get('app.restresponse')->createResponseArray($data, $this->getNewEntity());
         return new JsonResponse($data, $httpCode);
     }
 
@@ -108,7 +108,7 @@ abstract class RestController extends Controller
         $em->persist($object); /* tenant will be added via tenant listener */
         $em->flush();
 
-        return $this->_response($this->getEntityForJson($object->getId()), 201);
+        return $this->response($this->getEntityForJson($object->getId()), 201);
     }
 
     /**
@@ -138,7 +138,7 @@ abstract class RestController extends Controller
 
         $fileManager->attach($file, $object);
 
-        return $this->_response([], 201);
+        return $this->response([], 201);
     }
 
 
@@ -168,7 +168,7 @@ abstract class RestController extends Controller
 
         $this->getDoctrine()->getManager()->flush($object);
 
-        return $this->_response($this->getEntityForJson($object->getId()), 200);
+        return $this->response($this->getEntityForJson($object->getId()), 200);
     }
 
     /**
@@ -190,7 +190,7 @@ abstract class RestController extends Controller
         $em->remove($object);
         $em->flush();
 
-        return $this->_response([], 204);
+        return $this->response([], 204);
     }
 
     /**
