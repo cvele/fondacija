@@ -7,7 +7,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/organizations")
- * @Security("has_role('ROLE_ORGANIZATION_SCOPE')")
  */
 class OrganizationApiController extends RestController
 {

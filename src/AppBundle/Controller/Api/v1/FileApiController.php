@@ -10,19 +10,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/files")
- * @Security("has_role('ROLE_FILE_SCOPE')")
  */
 class FileApiController extends RestController
 {
-    /**
-     * @see RestController::implementsMethods()
-     * @return array
-     */
-    protected function implementsMethods()
-    {
-      return ['POST', 'DELETE'];
-    }
-
     /**
     * @Route("/")
     * @Method({"POST"})

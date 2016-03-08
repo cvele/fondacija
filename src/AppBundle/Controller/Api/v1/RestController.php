@@ -17,19 +17,8 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  *
  * @abstract
  */
-abstract class RestController extends Controller {
-
-    /**
-     * Method returns http methods that are supported by controller
-     *
-     * @abstract
-     * @return array
-     */
-    protected function implementsMethods()
-    {
-      return ['GET', 'POST', 'PUT', 'DELETE'];
-    }
-
+abstract class RestController extends Controller
+{
     /**
      * This method should return the entity's repository.
      *
@@ -51,16 +40,23 @@ abstract class RestController extends Controller {
     *
     * @return JsonResponse
     *
-    * @Route("/", name="api_users")
+    * @Route("/")
     * @Method({"GET"})
     */
     public function listAction()
     {
-        $list = $this->getRepository()
-            ->createQueryBuilder('e')
-            ->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $filters = [];
+        if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
+            $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
+            if ($tenant === null) {
+              throw $this->createAccessDeniedException('User not authorized or missing tenant.');
+            }
+            $filters['tenant'] = $tenant->getId();
+        }
 
-        return new JsonResponse($list, 200);
+        $list = $this->getRepository()->findBy($filters);
+
+        return $this->_response($list);
     }
 
     /**
@@ -76,10 +72,16 @@ abstract class RestController extends Controller {
     {
         $entityInstance = $this->getEntityForJson($id);
         if (false === $entityInstance) {
-            return $this->createNotFoundException();
+            throw $this->createNotFoundException();
         }
 
-        return new JsonResponse($entityInstance, 200);
+        return $this->_response($entityInstance);
+    }
+
+    protected function _response($data, $httpCode = 200)
+    {
+        $data = $this->get('app.rest_response')->createResponseArray($data, $this->getNewEntity());
+        return new JsonResponse($data, $httpCode);
     }
 
     /**
@@ -106,7 +108,7 @@ abstract class RestController extends Controller {
         $em->persist($object); /* tenant will be added via tenant listener */
         $em->flush();
 
-        return new JsonResponse($this->getEntityForJson($object->getId()), 201);
+        return $this->_response($this->getEntityForJson($object->getId()), 201);
     }
 
     /**
@@ -121,7 +123,7 @@ abstract class RestController extends Controller {
     {
         $object = $this->getEntity($id);
         if (false === $object) {
-            return $this->createNotFoundException("Entity not found.");
+            throw $this->createNotFoundException("Entity not found.");
         }
 
         if (!($object instanceof AttachableEntityInterface)) {
@@ -131,12 +133,12 @@ abstract class RestController extends Controller {
         $fileManager = $this->get('app.manager.file');
         $file = $fileManager->getRepo()->find($fileId);
         if (false === $file) {
-            return $this->createNotFoundException("File not found.");
+            throw $this->createNotFoundException("File not found.");
         }
 
         $fileManager->attach($file, $object);
 
-        return new JsonResponse([], 204);
+        return $this->_response([], 201);
     }
 
 
@@ -152,7 +154,7 @@ abstract class RestController extends Controller {
     {
         $object = $this->getEntity($id);
         if (false === $object) {
-            return $this->createNotFoundException();
+            throw $this->createNotFoundException();
         }
 
         $json = $this->getJsonFromRequest();
@@ -166,7 +168,7 @@ abstract class RestController extends Controller {
 
         $this->getDoctrine()->getManager()->flush($object);
 
-        return new JsonResponse($this->getEntityForJson($object->getId()), 200);
+        return $this->_response($this->getEntityForJson($object->getId()), 200);
     }
 
     /**
@@ -181,14 +183,14 @@ abstract class RestController extends Controller {
     {
         $object = $this->getEntity($id);
         if (false === $object) {
-            return $this->createNotFoundException();
+            throw $this->createNotFoundException();
         }
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($object);
         $em->flush();
 
-        return new Response([], 204);
+        return $this->_response([], 204);
     }
 
     /**
@@ -236,23 +238,12 @@ abstract class RestController extends Controller {
             $filters['tenant'] = $tenant->getId();
         }
 
-        try {
-            $query = $this->getRepository()->createQueryBuilder('e')
-                            ->where('e.id = :id');
-
-            if (isset($filters['tenant'])) {
-              $query->andWhere('e.tenant = :tenant')
-                ->setParameter('tenant', $tenant);
-            }
-
-            $query->setParameter('id', $id)
-                ->getQuery()->getSingleResult(Query::HYDRATE_ARRAY);
-        }
-        catch (NoResultException $ex) {
+        $entity = $this->getRepository()->findOneBy($filters);
+        if ($entity === null) {
             return false;
         }
 
-        return false;
+        return $entity;
     }
 
     /**

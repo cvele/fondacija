@@ -9,19 +9,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/invitations")
- * @Security("has_role('ROLE_ORGANIZATION_SCOPE')")
  */
 class InvitationApiController extends RestController
 {
-  /**
-   * @see RestController::implementsMethods()
-   * @return array
-   */
-  protected function implementsMethods()
-  {
-    return ['GET', 'POST', 'DELETE'];
-  }
-
   /**
    * @Route("/invitation")
    * @Method({"POST"})

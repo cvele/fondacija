@@ -7,7 +7,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/persons")
- * @Security("has_role('ROLE_PERSON_SCOPE')")
  */
 class PersonApiController extends RestController
 {

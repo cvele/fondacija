@@ -38,7 +38,7 @@ security:
         anonymous:      ~
         form_login:
             provider:   fos_userbundle
-            csrf_provider: security.csrf.token_manager
+            csrf_token_generator: security.csrf.token_manager
             login_path: /login
         logout:         true
         anonymous:      true

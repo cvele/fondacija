@@ -1,8 +1,4 @@
 services:
-    app.http_method_listener:
-        class: AppBundle\Event\Listener\HttpMethodListener
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
 
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener

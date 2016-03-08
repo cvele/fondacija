@@ -10,12 +10,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/users")
- * @Security("has_role('ROLE_USER_SCOPE')")
  */
 class UserApiController extends RestController
 {
   /**
-   * @Route("/{id}", name="api_users_read")
+   * @Route("/{id}")
    * @Method({"GET"})
    */
   public function readAction($id)
@@ -28,10 +27,6 @@ class UserApiController extends RestController
           $id = $user->getId();
       }
       return parent::readAction($id);
-  }
-
-  public function createAction() {
-      throw new HttpException(405, "User entity can be created only through register methods.");
   }
 
   /**
