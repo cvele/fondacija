@@ -29,7 +29,8 @@
         "cvele/multitenant-bundle": "dev-master",
         "enzim/tika-wrapper": "dev-master",
         "jms/serializer-bundle": "^1.1",
-        "nelmio/cors-bundle": "^1.4"
+        "nelmio/cors-bundle": "^1.4",
+        "league/fractal": "^0.13.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

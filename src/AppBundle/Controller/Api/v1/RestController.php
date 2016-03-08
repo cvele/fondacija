@@ -25,18 +25,10 @@ abstract class RestController extends Controller {
      * @abstract
      * @return array
      */
-    public function implementsMethods()
+    protected function implementsMethods()
     {
       return ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'];
     }
-
-    /**
-     * Method returns scope that is required to access resource
-     *
-     * @abstract
-     * @return string
-     */
-    abstract function scope();
 
     /**
      * This method should return the entity's repository.
@@ -132,9 +124,9 @@ abstract class RestController extends Controller {
             return $this->createNotFoundException("Entity not found.");
         }
 
-    		if (!($object instanceof AttachableEntityInterface)) {
+        if (!($object instanceof AttachableEntityInterface)) {
           throw new HttpException(405, 'Attach method is not supported on this entity.');
-    		}
+        }
 
         $fileManager = $this->get('app.manager.file');
         $file = $fileManager->getRepo()->find($fileId);

@@ -6,21 +6,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/users")
+ * @Security("has_role('ROLE_USER_SCOPE')")
  */
 class UserApiController extends RestController
 {
-  /**
-   * @see RestController::scope()
-   * @return string
-   */
-  protected function scope()
-  {
-    return 'user';
-  }
-
   /**
    * @Route("/{id}", name="api_users_read")
    * @Method({"GET"})

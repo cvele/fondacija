@@ -5,21 +5,14 @@ namespace AppBundle\Controller\Api\v1;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/invitations")
+ * @Security("has_role('ROLE_ORGANIZATION_SCOPE')")
  */
 class InvitationApiController extends RestController
 {
-  /**
-   * @see RestController::scope()
-   * @return string
-   */
-  protected function scope()
-  {
-    return 'invitation';
-  }
-
   /**
    * @see RestController::implementsMethods()
    * @return array

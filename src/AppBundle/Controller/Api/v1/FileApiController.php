@@ -6,9 +6,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 /**
  * @Route("/api/v1/files")
+ * @Security("has_role('ROLE_FILE_SCOPE')")
  */
 class FileApiController extends RestController
 {
@@ -19,11 +21,6 @@ class FileApiController extends RestController
     protected function implementsMethods()
     {
       return ['POST', 'DELETE', 'OPTIONS'];
-    }
-
-    protected function scope()
-    {
-      return 'file';
     }
 
     /**
