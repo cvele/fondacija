@@ -27,7 +27,7 @@ abstract class RestController extends Controller {
      */
     protected function implementsMethods()
     {
-      return ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'];
+      return ['GET', 'POST', 'PUT', 'DELETE'];
     }
 
     /**
@@ -36,7 +36,7 @@ abstract class RestController extends Controller {
      * @abstract
      * @return EntityRepository
      */
-    abstract function getRepository();
+    abstract protected function getRepository();
 
     /**
      * This method should return a new entity instance to be used for the "create" action.
@@ -44,7 +44,7 @@ abstract class RestController extends Controller {
      * @abstract
      * @return Object
      */
-    abstract function getNewEntity();
+    abstract protected function getNewEntity();
 
     /**
     * Base "list" action.

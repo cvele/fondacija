@@ -20,7 +20,7 @@ class FileApiController extends RestController
      */
     protected function implementsMethods()
     {
-      return ['POST', 'DELETE', 'OPTIONS'];
+      return ['POST', 'DELETE'];
     }
 
     /**

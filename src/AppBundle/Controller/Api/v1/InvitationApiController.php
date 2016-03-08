@@ -19,7 +19,7 @@ class InvitationApiController extends RestController
    */
   protected function implementsMethods()
   {
-    return ['GET', 'POST', 'DELETE', 'OPTIONS'];
+    return ['GET', 'POST', 'DELETE'];
   }
 
   /**
