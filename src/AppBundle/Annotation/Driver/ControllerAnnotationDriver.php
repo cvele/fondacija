@@ -2,10 +2,9 @@
 
 namespace AppBundle\Annotation\Driver;
 
-use Doctrine\Common\Annotations\Reader;//This thing read annotations
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;//Use essential kernel component
-use AppBundle\Annotation\RequireTenant;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use AppBundle\Annotation\RequireTenant;
 
 class ControllerAnnotationDriver {
 

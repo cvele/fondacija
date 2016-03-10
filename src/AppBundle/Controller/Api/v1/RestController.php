@@ -46,7 +46,6 @@ abstract class RestController extends Controller
     */
     public function listAction(Request $request)
     {
-        $parameters = $request->query->all();
         $filters = [];
         if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
             $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
