@@ -2,8 +2,6 @@
 
 namespace AppBundle\Request\Validator;
 
-use Symfony\Component\Validator\Constraints;
-use AppBundle\Validator\Constraints\FileNotExist;
 use AppBundle\Request\Exception\PayloadValidationException;
 
 abstract class RequestValidator

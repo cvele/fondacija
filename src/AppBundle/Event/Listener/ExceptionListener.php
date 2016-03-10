@@ -4,7 +4,6 @@ namespace AppBundle\Event\Listener;
 
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use AppBundle\Request\Exception\PayloadValidationException;
 
 class ExceptionListener
