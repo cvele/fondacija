@@ -18,3 +18,8 @@ services:
         arguments: ["@app.manager.file", "app.apache_tika"]
         tags:
         - { name: kernel.event_listener, event: app.file.attached, method: processApacheTika }
+
+    app.exception_listener:
+        class: AppBundle\Event\Listener\ExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }

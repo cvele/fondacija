@@ -4,13 +4,13 @@ namespace AppBundle\Controller\Api\v1;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\NoResultException;
+use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
 use AppBundle\Entity\AttachableEntityInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use AppBundle\Annotation\RequireTenant;
 
 /**
  * Each entity controller must extends this class.
@@ -42,9 +42,11 @@ abstract class RestController extends Controller
     *
     * @Route("/")
     * @Method({"GET"})
+    * @RequireTenant
     */
-    public function listAction()
+    public function listAction(Request $request)
     {
+        $parameters = $request->query->all();
         $filters = [];
         if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
             $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
@@ -56,75 +58,63 @@ abstract class RestController extends Controller
 
         $list = $this->getRepository()->findBy($filters);
 
-        return $this->response($list);
+        return $this->response($list, 200, $request);
     }
 
     /**
     * Base "read" action.
     *
     * @param int $id
-    * @return JsonResponse|NotFoundHttpException
+    * @return JsonResponse
     *
     * @Route("/{id}")
     * @Method({"GET"})
+    * @RequireTenant
     */
     public function readAction($id)
     {
-        $entityInstance = $this->getEntityForJson($id);
-        if (false === $entityInstance) {
-            throw $this->createNotFoundException();
-        }
-
-        return $this->response($entityInstance);
-    }
-
-    protected function response($data, $httpCode = 200)
-    {
-        $data = $this->get('app.restresponse')->createResponseArray($data, $this->getNewEntity());
-        return new JsonResponse($data, $httpCode);
+        $request = $this->get('request');
+        return $this->response($this->getEntity($id), 200, $request);
     }
 
     /**
     * Base "create" action.
     *
-    * @return JsonResponse|NotFoundHttpException
+    * @return JsonResponse
     *
     * @Route("/")
+    * @Route("")
     * @Method({"POST"})
+    * @RequireTenant
     */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        $json = $this->getJsonFromRequest();
-        if (false === $json) {
-            throw new \Exception('Invalid JSON');
-        }
+        $payload = $this->parseRequest($request);
 
-        $object = $this->updateEntity($this->getNewEntity(), $json);
+        $object = $this->updateEntity($this->getNewEntity(), $payload);
         if (false === $object) {
-            throw new \Exception('Unable to create the entity');
+            throw new HttpException(500, 'Unable to create the entity');
         }
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($object); /* tenant will be added via tenant listener */
         $em->flush();
 
-        return $this->response($this->getEntityForJson($object->getId()), 201);
+        return $this->response($this->getEntity($object->getId()), 201);
     }
 
     /**
      * Base "attach" action.
      *
-     * @return JsonResponse|NotFoundHttpException
+     * @return JsonResponse
      *
      * @Route("/{id}/attach/{fileId}")
      * @Method({"PUT"})
+     * @RequireTenant
      */
-    public function attachAction($id, $fileId)
+    public function attachAction(Request $request, $id, $fileId)
     {
         $object = $this->getEntity($id);
-        if (false === $object) {
-            throw $this->createNotFoundException("Entity not found.");
-        }
 
         if (!($object instanceof AttachableEntityInterface)) {
           throw new HttpException(405, 'Attach method is not supported on this entity.');
@@ -138,53 +128,46 @@ abstract class RestController extends Controller
 
         $fileManager->attach($file, $object);
 
-        return $this->response([], 201);
+        return $this->response([], 204);
     }
 
 
     /**
      * Base "update" action.
      *
-     * @return JsonResponse|NotFoundHttpException
+     * @return JsonResponse
      *
      * @Route("/{id}")
      * @Method({"PUT"})
+     * @Method({"PATCH"})
+     * @RequireTenant
      */
-    public function updateAction($id)
+    public function updateAction(Request $request, $id)
     {
         $object = $this->getEntity($id);
-        if (false === $object) {
-            throw $this->createNotFoundException();
-        }
+        $payload = $this->parseRequest($request);
 
-        $json = $this->getJsonFromRequest();
-        if (false === $json) {
-            throw new \Exception('Invalid JSON');
-        }
-
-        if (false === $this->updateEntity($object, $json)) {
-            throw new \Exception('Unable to update the entity');
+        if (false === $this->updateEntity($object, $payload)) {
+            throw new HttpException(500, 'Unable to update the entity');
         }
 
         $this->getDoctrine()->getManager()->flush($object);
 
-        return $this->response($this->getEntityForJson($object->getId()), 200);
+        return $this->response($this->getEntity($object->getId()), 200);
     }
 
     /**
      * Base "delete" action.
      *
-     * @return JsonResponse|NotFoundHttpException
+     * @return JsonResponse
      *
      * @Route("/{id}")
      * @Method({"DELETE"})
+     * @RequireTenant
      */
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
         $object = $this->getEntity($id);
-        if (false === $object) {
-            throw $this->createNotFoundException();
-        }
 
         $em = $this->getDoctrine()->getManager();
         $em->remove($object);
@@ -194,40 +177,12 @@ abstract class RestController extends Controller
     }
 
     /**
-     * Returns an entity from its ID, or FALSE in case of error.
+     * Returns an entity from its ID or FALSE in case of error.
      *
      * @param int $id
-     * @return Object|boolean
+     * @return mixed
      */
     protected function getEntity($id)
-    {
-        $filters = ['id' => $id];
-
-        if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
-            $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
-            if ($tenant === null) {
-              throw $this->createAccessDeniedException('User not authorized or missing tenant.');
-            }
-            $filters['tenant'] = $tenant->getId();
-        }
-
-        try {
-            return $this->getRepository()->findBy($filters);
-        }
-        catch (NoResultException $ex) {
-            return false;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns an entity from its ID as an associative array, or FALSE in case of error.
-     *
-     * @param int $id
-     * @return array|boolean
-     */
-    protected function getEntityForJson($id)
     {
         $filters = ['id' => $id];
         if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
@@ -240,55 +195,91 @@ abstract class RestController extends Controller
 
         $entity = $this->getRepository()->findOneBy($filters);
         if ($entity === null) {
-            return false;
+            throw $this->createNotFoundException("Entity not found.");
         }
 
         return $entity;
     }
 
-    /**
-     * Returns the request's JSON content, or FALSE in case of error.
-     *
-     * @return string|boolean
-     */
-    protected function getJsonFromRequest()
-    {
-        $json = $this->get("request")->getContent();
-        if (!$json) {
-            return false;
-        }
-
-        return $json;
-    }
 
     /**
      * Updates an entity with data from a JSON string.
      * Returns the entity, or FALSE in case of error.
      *
      * @param Object $entity
-     * @param string $json
+     * @param string $requestData
      * @return Object|boolean
      */
-    protected function updateEntity($entity, $json)
+    protected function updateEntity($entity, $requestData)
     {
-        if ($this->get('multi_tenant.helper')->isTenantObjectOwner($entity) === false) {
-            throw $this->createAccessDeniedException('Current user has no access rights for this object.');
-        }
-
-        $data = json_decode($json);
-        if ($data === null) {
-            return false;
-        }
-
-        foreach ($data as $name => $value) {
-            if ($name != 'id') {
-                $setter = 'set' . ucfirst($name);
-                if (method_exists($entity, $setter)) {
-                    call_user_func_array(array($entity, $setter), array($value));
+        $em = $this->getDoctrine()->getManager();
+        if ($em->contains($entity) === false) { // this is not a new entity, preform tenant owner check
+            if ($entity instanceof TenantAwareEntityInterface) {
+                if ($this->get('multi_tenant.helper')->isTenantObjectOwner($entity) === false) {
+                    throw $this->createAccessDeniedException('User is not allowed to modify object.');
                 }
             }
         }
 
-        return $entity;
+        $entityInstance = new $entity;
+        foreach ($requestData as $name => $value) {
+            if ($name != 'id' && $name != 'tenant') {
+                $setter = 'set' . ucfirst($name);
+                if (method_exists($entity, $setter)) {
+                    $entityInstance->$setter($value);
+                }
+            }
+        }
+
+        return $entityInstance;
+    }
+    /**
+     * Returns the parsed payload.
+     *
+     * @throws HttpException
+     * @return string|boolean
+     */
+    protected function parseRequest(Request $request)
+    {
+        $payload = json_decode($request->getContent(), true);
+
+        $this->validateRequest($payload, $request->getMethod());
+
+        $error = json_last_error();
+		if ($error && $error !== JSON_ERROR_NONE) {
+			throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, sprintf("Invalid json payload supplied. Error: '%s'", (string) $error));
+		}
+
+        if (!is_array($payload) && !is_object($payload)) {
+			throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, "Invalid json payload supplied. Error: 'JSON must be array or object'. '%s'", $this->get("request")->getContent());
+		}
+
+        return $payload;
+    }
+
+    private function validateRequest($payload, $httpMethod)
+    {
+        $function = new \ReflectionClass($this->getNewEntity());
+        $validatorName = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $function->getShortName()));
+        $this->get('app.validator.'.$validatorName)
+            ->setHttpMethod($httpMethod)
+            ->setPayload($payload)
+            ->validate();
+    }
+
+    /**
+     * Returns JsonResponse object for collection or entity
+     *
+     * @param mixed $data
+     * @param integer $httpCode
+     * @return JsonResponse
+     */
+    protected function response($data, $httpCode = 200, $request = null)
+    {
+        $data =
+        $this->get('app.rest_response')
+            ->createResponseArray($data, $this->getNewEntity(), $request->query->get('include', []));
+
+        return new JsonResponse($data, $httpCode);
     }
 }

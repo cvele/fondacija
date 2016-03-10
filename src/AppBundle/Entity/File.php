@@ -49,6 +49,12 @@ class File implements TenantAwareEntityInterface
      */
     protected $text;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="files")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id")
+     */
+    private $user;
+
     use TenantAwareEntityTrait;
 
     public function getPathCallable()
@@ -191,6 +197,30 @@ class File implements TenantAwareEntityInterface
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Gets the value of user.
+     *
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Sets the value of user.
+     *
+     * @param mixed $user the user
+     *
+     * @return self
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
 }

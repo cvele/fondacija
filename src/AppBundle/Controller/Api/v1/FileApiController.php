@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/api/v1/files")
@@ -16,7 +17,7 @@ class FileApiController extends RestController
     * @Route("/")
     * @Method({"POST"})
     */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $uploadedFile = $this->get("request")->files->get('file', null);
 
@@ -35,7 +36,7 @@ class FileApiController extends RestController
      * @Route("/{id}")
      * @Method({"DELETE"})
      */
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
         $object = $this->getEntity($id);
         if (false === $object) {

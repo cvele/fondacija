@@ -6,6 +6,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Annotation\RequireTenant;
 
 /**
  * @Route("/api/v1/users")
@@ -15,6 +17,7 @@ class UserApiController extends RestController
   /**
    * @Route("/{id}")
    * @Method({"GET"})
+   * @RequireTenant
    */
   public function readAction($id)
   {

@@ -28,7 +28,7 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=140)
      */
     private $name;
 
@@ -40,13 +40,6 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     private $description;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="logo", type="string", length=255, nullable=true)
-     */
-    private $logo;
-
-    /**
      * @ORM\OneToMany(targetEntity="Person", mappedBy="organization")
      */
     private $persons;
@@ -56,6 +49,12 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
      * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true)
      */
     private $user;
+
+    /**
+     * @ORM\OneToOne(targetEntity="File")
+     * @ORM\JoinColumn(name="logo_file_id", referencedColumnName="id")
+     */
+    private $logo;
 
     /**
      * @ORM\ManyToMany(targetEntity="File")
@@ -134,30 +133,6 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
         return $this->description;
     }
 
-    /**
-     * Set logo
-     *
-     * @param string $logo
-     *
-     * @return self
-     */
-    public function setLogo($logo)
-    {
-        $this->logo = $logo;
-
-        return $this;
-    }
-
-    /**
-     * Get logo
-     *
-     * @return string
-     */
-    public function getLogo()
-    {
-        return $this->logo;
-    }
-
     public function getFiles()
     {
         return $this->files;
@@ -228,4 +203,29 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
 
         return $this;
     }
+
+    /**
+     * Get the value of Logo
+     *
+     * @return mixed
+     */
+    public function getLogo()
+    {
+        return $this->logo;
+    }
+
+    /**
+     * Set the value of Logo
+     *
+     * @param mixed logo
+     *
+     * @return self
+     */
+    public function setLogo($logo)
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
+
 }

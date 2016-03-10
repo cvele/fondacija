@@ -16,9 +16,10 @@ class RestResponse
         $this->transformerFactory = $transformerFactory;
     }
 
-    public function createResponseArray($data, $entity)
+    public function createResponseArray($data, $entity, $include)
     {
         $fractal = new Manager();
+        $fractal->parseIncludes($include);
         $fractal->setSerializer(new ArraySerializer());
         $transformer = $this->transformerFactory->get($entity);
         if (is_array($data)) {

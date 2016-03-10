@@ -361,6 +361,11 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface
         return $this;
     }
 
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
     public function addFile(File $file)
     {
         $this->files->add($file);

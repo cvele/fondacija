@@ -61,3 +61,22 @@ services:
         class: "AppBundle\\Response\\RestResponse"
         arguments:
             - "@app.transformer_factory"
+
+    validator.file.not_exist:
+        class: AppBundle\Validator\Constraints\FileNotExistValidator
+        arguments: ["@app.manager.file"]
+        tags:
+            - { name: validator.constraint_validator, alias: file_not_exist }
+
+    app.request.validator:
+        abstract:  true
+        arguments: ["@validator"]
+
+    app.validator.organization:
+        class:  "AppBundle\\Request\\Validator\\OrganizationValidator"
+        parent: "app.request.validator"
+
+    app.annotation.controller:
+        class: AppBundle\Annotation\Driver\ControllerAnnotationDriver
+        tags: [{name: kernel.event_listener, event: kernel.controller, method: onKernelController}]
+        arguments: [@annotation_reader]

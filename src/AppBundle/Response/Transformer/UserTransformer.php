@@ -13,7 +13,16 @@ class UserTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'tenant'
+        'tenants'
+    ];
+
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'persons', 'organizations', 'files'
     ];
 
     /**
@@ -40,15 +49,46 @@ class UserTransformer extends TransformerAbstract
     }
 
     /**
+     * Include File collection
+     *
+     * @param User $user
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeFiles(User $user)
+    {
+        return $this->collection($user->getFiles(), new FileTransformer);
+    }
+
+    /**
+     * Include Organization collection
+     *
+     * @param User $user
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeOrganizations(User $user)
+    {
+        return $this->collection($user->getOrganizations(), new OrganizationTransformer);
+    }
+
+    /**
+     * Include Person collection
+     *
+     * @param User $user
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includePersons(User $user)
+    {
+        return $this->collection($user->getPersons(), new PersonTransformer);
+    }
+
+    /**
      * Include Tenant
      *
-     * @param Organization $user
-     * @return \League\Fractal\Resource\Item
+     * @param User $user
+     * @return \League\Fractal\Resource\Collection
      */
-    public function includeTenant(User $user)
+    public function includeTenants(User $user)
     {
-        $tenant = $user->getTenant();
-
-        return $this->item($tenant, new TenantTransformer);
+        return $this->collection($user->getUserTenants(), new TenantTransformer);
     }
 }

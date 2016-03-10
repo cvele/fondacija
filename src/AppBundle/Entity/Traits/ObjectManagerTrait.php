@@ -62,6 +62,11 @@ trait ObjectManagerTrait
         return $instance;
     }
 
+    public function findByTenant(Tenant $tenant)
+    {
+        return $this->getRepo()->findBy(['tenant'=>$tenant]);
+    }
+
     public function save($entity, $event_name = 'app.entity.saved')
     {
         $this->om->persist($entity);

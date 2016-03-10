@@ -8,6 +8,15 @@ use League\Fractal\TransformerAbstract;
 class FileTransformer extends TransformerAbstract
 {
     /**
+     * List of resources to automatically include
+     *
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'user', 'tenant'
+    ];
+
+    /**
      * Turn this item object into a generic array
      *
      * @return array
@@ -27,4 +36,27 @@ class FileTransformer extends TransformerAbstract
             ]
         ];
     }
+
+    /**
+     * Include Tenant
+     *
+     * @param File $file
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeTenant(File $file)
+    {
+        return $this->item($file->getTenant(), new TenantTransformer);
+    }
+
+    /**
+     * Include User
+     *
+     * @param File $organization
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeUser(File $file)
+    {
+        return $this->item($file->getUser(), new UserTransformer);
+    }
+
 }

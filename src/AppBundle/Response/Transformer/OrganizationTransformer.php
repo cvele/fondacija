@@ -13,7 +13,16 @@ class OrganizationTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'persons', 'user', 'tenant'
+        'user', 'tenant'
+    ];
+
+    /**
+     * List of resources possible to include
+     *
+     * @var array
+     */
+    protected $availableIncludes = [
+        'persons', 'files'
     ];
 
     /**
@@ -24,8 +33,8 @@ class OrganizationTransformer extends TransformerAbstract
     public function transform(Organization $organization)
     {
         return [
-            'id'        => (int) $organization->getId(),
-            'name'      => $organization->getName(),
+            'id'          => (int) $organization->getId(),
+            'name'        => $organization->getName(),
             'description' => $organization->getDescription(),
             'links' => [
                 [
@@ -44,9 +53,7 @@ class OrganizationTransformer extends TransformerAbstract
      */
     public function includeTenant(Organization $organization)
     {
-        $tenant = $organization->getTenant();
-
-        return $this->item($tenant, new TenantTransformer);
+        return $this->item($organization->getTenant(), new TenantTransformer);
     }
 
     /**
@@ -57,9 +64,7 @@ class OrganizationTransformer extends TransformerAbstract
      */
     public function includeUser(Organization $organization)
     {
-        $user = $organization->getUser();
-
-        return $this->item($user, new UserTransformer);
+        return $this->item($organization->getUser(), new UserTransformer);
     }
 
     /**
@@ -70,8 +75,17 @@ class OrganizationTransformer extends TransformerAbstract
      */
     public function includePersons(Organization $organization)
     {
-        $persons = $organization->getPersons();
+        return $this->collection($organization->getPersons(), new PersonTransformer);
+    }
 
-        return $this->collection($persons, new PersonTransformer);
+    /**
+     * Include Persons
+     *
+     * @param Organization $organization
+     * @return \League\Fractal\Resource\Collection
+     */
+    public function includeFiles(Organization $organization)
+    {
+        return $this->collection($organization->getFiles(), new FileTransformer);
     }
 }

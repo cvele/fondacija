@@ -32,6 +32,11 @@ class User extends BaseUser implements TenantAwareUserInterface
     private $persons;
 
     /**
+     * @ORM\OneToMany(targetEntity="File", mappedBy="user")
+     */
+    private $files;
+
+    /**
      * @ORM\OneToMany(targetEntity="Organization", mappedBy="user")
      */
     private $organizations;
@@ -67,6 +72,16 @@ class User extends BaseUser implements TenantAwareUserInterface
     public function getPersons()
     {
         return $this->persons;
+    }
+
+    /**
+     * Gets the value of files.
+     *
+     * @return mixed
+     */
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     public function toArray()
