@@ -4,7 +4,6 @@ namespace AppBundle\Event\Listener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use AppBundle\Entity\CreatorAwareInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class UserEntityListener
 {
@@ -27,8 +26,6 @@ class UserEntityListener
       if (empty($user)) {
         return;
       }
-
-      $entityManager = $args->getEntityManager();
 
       $entity->setUser($user);
   }

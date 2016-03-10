@@ -29,7 +29,7 @@ class TenantSecurityListener
         return $this->check($args);
     }
 
-    protected function check($args)
+    protected function check(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
         if (!$entity instanceof TenantAwareEntityInterface) {

@@ -10,7 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use AppBundle\Entity\AttachableEntityInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use AppBundle\Annotation\RequireTenant;
-use AppBundle\Annotation\REST;
 
 /**
  * Each entity controller must extends this class.
