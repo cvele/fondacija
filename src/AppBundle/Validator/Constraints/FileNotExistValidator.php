@@ -16,7 +16,7 @@ class FileNotExistValidator extends ConstraintValidator
 
     public function validate($value, Constraint $constraint)
     {
-        $file_exists = $this->manager->getRepo()->find($value);
+        $file_exists = $this->manager->findById($value);
         if ($file_exists === null) {
             $this->context->addViolation(
                 $constraint->message,

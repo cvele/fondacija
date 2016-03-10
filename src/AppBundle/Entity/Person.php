@@ -14,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(name="persons")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\PersonRepository")
  */
-class Person implements TenantAwareEntityInterface, AttachableEntityInterface
+class Person implements TenantAwareEntityInterface, AttachableEntityInterface, CreatorAwareInterface
 {
     /**
      * @var integer
@@ -42,9 +42,9 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="business_email", type="string", length=255, nullable=true)
+     * @ORM\Column(name="email", type="string", length=255, nullable=true)
      */
-    private $businessEmail;
+    private $email;
 
     /**
      * @var string
@@ -83,13 +83,13 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="Organization", inversedBy="persons")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", nullable=false)
      */
     private $organization;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="persons")
-     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=false)
      */
     private $user;
 
@@ -103,8 +103,8 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface
     private $files;
 
     use TimestampableEntity;
-
     use TenantAwareEntityTrait;
+    use Traits\CreatorAwareTrait;
 
     public function __construct()
     {
@@ -170,27 +170,27 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface
     }
 
     /**
-     * Set businessEmail
+     * Set $email
      *
-     * @param string $businessEmail
+     * @param string $email
      *
      * @return Person
      */
-    public function setBusinessEmail($businessEmail)
+    public function setEmail($email)
     {
-        $this->businessEmail = $businessEmail;
+        $this->email = $email;
 
         return $this;
     }
 
     /**
-     * Get businessEmail
+     * Get $email
      *
      * @return string
      */
-    public function getBusinessEmail()
+    public function getEmail()
     {
-        return $this->businessEmail;
+        return $this->email;
     }
 
     /**
@@ -311,30 +311,6 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface
     public function getSkype()
     {
         return $this->skype;
-    }
-
-    /**
-     * Gets the value of user.
-     *
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * Sets the value of user.
-     *
-     * @param mixed $user the user
-     *
-     * @return self
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     /**

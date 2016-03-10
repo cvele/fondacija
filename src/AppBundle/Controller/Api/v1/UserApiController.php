@@ -7,9 +7,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use AppBundle\Annotation\RequireTenant;
+use AppBundle\Annotation\REST;
 
 /**
  * @Route("/api/v1/users")
+ * @REST("app.manager.user")
  */
 class UserApiController extends RestController
 {
@@ -62,22 +64,5 @@ class UserApiController extends RestController
 
       return new JsonResponse($this->getEntityForJson($user->getId()), 201);
   }
-
-  /**
-   * @see RestController::getRepository()
-   * @return EntityRepository
-   */
-  protected function getRepository()
-  {
-      return $this->getDoctrine()->getManager()->getRepository('AppBundle:User');
-  }
-
-  /**
-   * @see RestController::getNewEntity()
-   * @return Object
-   */
-  protected function getNewEntity()
-  {
-      return $this->get('fos_user.user_manager')->getClass();
-  }
+  
 }

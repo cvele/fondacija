@@ -27,13 +27,7 @@ class FileTransformer extends TransformerAbstract
             'id'        => (int) $file->getId(),
             'mimeType'  => $file->getMimeType(),
             'size'      => $file->getSize(),
-            'name'      => $file->getName(),
-            'links' => [
-                [
-                    'rel' => 'self',
-                    'href' => $this->router->generate('app_api_v1_fileapi_read', ['id'=>$file->getId()], true)
-                ]
-            ]
+            'name'      => $file->getName()
         ];
     }
 

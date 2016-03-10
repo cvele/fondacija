@@ -4,12 +4,6 @@ namespace AppBundle\Response;
 
 class TransformerFactory
 {
-    protected $router;
-
-    public function __construct($router)
-    {
-        $this->router = $router;
-    }
 
     public function get($entity)
     {
@@ -22,8 +16,6 @@ class TransformerFactory
         }
 
         $transformerClass = new $transformerClassName();
-        $transformerClass->router = $this->router;
-
         return $transformerClass;
     }
 }

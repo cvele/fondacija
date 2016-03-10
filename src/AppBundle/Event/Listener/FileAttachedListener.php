@@ -27,7 +27,7 @@ class FileAttachedListener
       }
 
       $tika = $this->tikaWrapper;
-			$plaintext = $tika::getText($file->getPath() . DIRECTORY_SEPARATOR . $file->getName());
+	  $plaintext = $tika::getText($file->getPath() . DIRECTORY_SEPARATOR . $file->getName());
 
       $file->setText($plaintext);
       $this->fileManager->simpleSave($file, 'app.file.tika_indexed');

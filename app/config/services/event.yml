@@ -1,11 +1,10 @@
 services:
-
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener
         tags:
             - { name: doctrine.event_subscriber, connection: default }
         calls:
-            - [ setAnnotationReader, [ @annotation_reader ] ]
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
 
     app.entity_event.invitation_listener:
         class: AppBundle\Event\Listener\InvitationListener
@@ -23,3 +22,13 @@ services:
         class: AppBundle\Event\Listener\ExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
+
+
+    app.security.doctrine.tenant_listener:
+        class: AppBundle\Event\Listener\TenantSecurityListener
+        arguments:
+            - "@session"
+        tags:
+            - { name: doctrine.event_listener, event: prePersist, connection: default, priority: 99 }
+            - { name: doctrine.event_listener, event: preRemove, connection: default, priority: 99 }
+            - { name: doctrine.event_listener, event: postLoad, connection: default, priority: 99 }

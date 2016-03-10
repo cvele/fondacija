@@ -38,13 +38,7 @@ class UserTransformer extends TransformerAbstract
             'email'     => $user->getEmail(),
             'lastLogin' => $user->getLastLogin(),
             'enabled'   => (bool) $user->isEnabled(),
-            'tenant'    => $user->getTenant(),
-            'links' => [
-                [
-                    'rel' => 'self',
-                    'href' => $this->router->generate('app_api_v1_userapi_read', ['id'=>$user->getId()], true)
-                ]
-            ]
+            'tenant'    => $user->getTenant()
         ];
     }
 

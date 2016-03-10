@@ -3,27 +3,51 @@
 namespace AppBundle\Controller\Api\v1;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Annotation\REST;
+use AppBundle\Annotation\RequireTenant;
 
 /**
  * @Route("/api/v1/persons")
+ * @REST("app.manager.person")
  */
 class PersonApiController extends RestController
 {
-    /**
-     * @see RestController::getRepository()
-     * @return EntityRepository
-     */
-    protected function getRepository()
-    {
-        return $this->get('app.manager.person')->getRepo();
-    }
 
     /**
-     * @see RestController::getNewEntity()
-     * @return Object
-     */
-    protected function getNewEntity()
+    * @Route("/")
+    * @Route("")
+    * @Method({"POST"})
+    * @RequireTenant
+    */
+    public function createAction(Request $request)
     {
-        return $this->get('app.manager.person')->createClass();
+        $entity = $this->getManager()->createClass();
+        $payload = $this->parseRequest($request);
+        $payload['organization'] = $this->get('app.manager.organization')->findById($payload['organization']);
+        $entity = $this->updateEntity($entity, $payload);
+        $this->getManager()->save($entity);
+
+        return $this->response($entity, 201, $request);
     }
+
+
+    /**
+     *
+     * @Route("/{id}")
+     * @Method({"PUT"})
+     * @Method({"PATCH"})
+     * @RequireTenant
+     */
+    public function updateAction(Request $request, $id) //@TODO too meny queries here
+    {
+        $entity = $this->getManager()->findById($id);
+        $payload = $this->parseRequest($request);
+        $entity = $this->updateEntity($entity, $payload);
+        $this->getManager()->save($entity);
+
+        return $this->response($this->getEntity($entity->getId()), 200);
+    }
+
 }

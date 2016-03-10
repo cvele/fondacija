@@ -14,7 +14,7 @@ use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
  * @ORM\Table(name="organizations")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\OrganizationRepository")
  */
-class Organization implements TenantAwareEntityInterface, AttachableEntityInterface
+class Organization implements TenantAwareEntityInterface, AttachableEntityInterface, CreatorAwareInterface
 {
     /**
      * @var integer
@@ -35,7 +35,7 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="text")
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
@@ -68,6 +68,8 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     use TenantAwareEntityTrait;
 
     use TimestampableEntity;
+
+    use Traits\CreatorAwareTrait;
 
     public function __construct()
     {
@@ -173,35 +175,6 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     public function removePerson(Person $person)
     {
         $this->persons->removeElement($person);
-    }
-
-    public function __toString()
-    {
-        return $this->getName();
-    }
-
-    /**
-     * Gets the value of user.
-     *
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * Sets the value of user.
-     *
-     * @param mixed $user the user
-     *
-     * @return self
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace AppBundle\Entity\Traits;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
+use Cvele\MultiTenantBundle\Helper\TenantHelper;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Event\EntityEvent;
 
@@ -29,14 +31,21 @@ trait ObjectManagerTrait
      * The Fully-Qualified Class Name for our entity
      * @var string
      */
-    protected $class;
+    protected $className;
 
-    public function __construct(EventDispatcherInterface $dispatcher, ObjectManager $om, $class)
+    /**
+     * MultiTenantBundle helper service
+     * @var TenantHelper
+     */
+    protected $tenantHelper;
+
+    public function __construct(EventDispatcherInterface $dispatcher, ObjectManager $om, TenantHelper $tenantHelper, $className)
     {
-        $this->dispatcher = $dispatcher;
-        $this->om         = $om;
-        $this->class      = $class;
-        $this->repo       = $om->getRepository($class);
+        $this->dispatcher   = $dispatcher;
+        $this->om           = $om;
+        $this->tenantHelper = $tenantHelper;
+        $this->className    = $className;
+        $this->repo         = $om->getRepository($className);
     }
 
     public function getEventDispatcher()
@@ -56,8 +65,8 @@ trait ObjectManagerTrait
 
     public function createClass()
     {
-        $class    = $this->class;
-        $instance = new $class();
+        $className = $this->className;
+        $instance = new $className();
 
         return $instance;
     }
@@ -65,6 +74,25 @@ trait ObjectManagerTrait
     public function findByTenant(Tenant $tenant)
     {
         return $this->getRepo()->findBy(['tenant'=>$tenant]);
+    }
+
+    public function findById($id)
+    {
+        $filters = ['id' => $id];
+        if ($this->createClass() instanceof TenantAwareEntityInterface) {
+            $tenant = $this->tenantHelper->getCurrentTenant();
+            if ($tenant === null) {
+              throw new \Exception('User not authorized or missing tenant.');
+            }
+            $filters['tenant'] = $tenant->getId();
+        }
+
+        $entity = $this->getRepo()->findOneBy($filters);
+        if ($entity === null) {
+            return false;
+        }
+
+        return $entity;
     }
 
     public function save($entity, $event_name = 'app.entity.saved')

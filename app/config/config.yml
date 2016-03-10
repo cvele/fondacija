@@ -1,17 +1,15 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
-    - { resource: services.yml }
-    - { resource: services/security.yml }
-    - { resource: services/event.yml }
-    - { resource: services/general.yml }
     - { resource: vendor/fos_user.yml }
     - { resource: vendor/mandrill.yml }
-    - { resource: vendor/fos_elastica.yml }
+    # - { resource: vendor/fos_elastica.yml }
     - { resource: vendor/cvele_tenant.yml }
     - { resource: vendor/oauth.yml }
     - { resource: vendor/cors.yml }
     - { resource: vendor/doctrine_extensions.yml }
+    - { resource: services/event.yml }
+    - { resource: services/general.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration

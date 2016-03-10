@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
 use AppBundle\Entity\AttachableEntityInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use AppBundle\Annotation\RequireTenant;
+use AppBundle\Annotation\REST;
 
 /**
  * Each entity controller must extends this class.
@@ -19,21 +19,7 @@ use AppBundle\Annotation\RequireTenant;
  */
 abstract class RestController extends Controller
 {
-    /**
-     * This method should return the entity's repository.
-     *
-     * @abstract
-     * @return EntityRepository
-     */
-    abstract protected function getRepository();
-
-    /**
-     * This method should return a new entity instance to be used for the "create" action.
-     *
-     * @abstract
-     * @return Object
-     */
-    abstract protected function getNewEntity();
+    protected $manager;
 
     /**
     * Base "list" action.
@@ -46,18 +32,7 @@ abstract class RestController extends Controller
     */
     public function listAction(Request $request)
     {
-        $filters = [];
-        if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
-            $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
-            if ($tenant === null) {
-              throw $this->createAccessDeniedException('User not authorized or missing tenant.');
-            }
-            $filters['tenant'] = $tenant->getId();
-        }
-
-        $list = $this->getRepository()->findBy($filters);
-
-        return $this->response($list, 200, $request);
+        return $this->response($this->getManager()->findAll(), 200, $request);
     }
 
     /**
@@ -73,7 +48,7 @@ abstract class RestController extends Controller
     public function readAction($id)
     {
         $request = $this->get('request');
-        return $this->response($this->getEntity($id), 200, $request);
+        return $this->response($this->getManager()->findById($id), 200, $request);
     }
 
     /**
@@ -88,18 +63,12 @@ abstract class RestController extends Controller
     */
     public function createAction(Request $request)
     {
+        $entity = $this->getManager()->createClass();
         $payload = $this->parseRequest($request);
+        $entity = $this->updateEntity($entity, $payload);
+        $this->getManager()->save($entity);
 
-        $object = $this->updateEntity($this->getNewEntity(), $payload);
-        if (false === $object) {
-            throw new HttpException(500, 'Unable to create the entity');
-        }
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($object); /* tenant will be added via tenant listener */
-        $em->flush();
-
-        return $this->response($this->getEntity($object->getId()), 201);
+        return $this->response($entity, 201, $request);
     }
 
     /**
@@ -113,18 +82,17 @@ abstract class RestController extends Controller
      */
     public function attachAction(Request $request, $id, $fileId)
     {
-        $object = $this->getEntity($id);
+        $entity = $this->getManager()->findById($id);
 
-        if (!($object instanceof AttachableEntityInterface)) {
+        if (!$entity instanceof AttachableEntityInterface) {
           throw new HttpException(405, 'Attach method is not supported on this entity.');
         }
 
         $fileManager = $this->get('app.manager.file');
-        $file = $fileManager->getRepo()->find($fileId);
+        $file = $fileManager->findById($fileId);
         if (false === $file) {
             throw $this->createNotFoundException("File not found.");
         }
-
         $fileManager->attach($file, $object);
 
         return $this->response([], 204);
@@ -141,18 +109,14 @@ abstract class RestController extends Controller
      * @Method({"PATCH"})
      * @RequireTenant
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $id) //@TODO too meny queries here
     {
-        $object = $this->getEntity($id);
+        $entity = $this->getManager()->findById($id);
         $payload = $this->parseRequest($request);
+        $entity = $this->updateEntity($entity, $payload);
+        $this->getManager()->save($entity);
 
-        if (false === $this->updateEntity($object, $payload)) {
-            throw new HttpException(500, 'Unable to update the entity');
-        }
-
-        $this->getDoctrine()->getManager()->flush($object);
-
-        return $this->response($this->getEntity($object->getId()), 200);
+        return $this->response($this->getEntity($entity->getId()), 200);
     }
 
     /**
@@ -166,40 +130,11 @@ abstract class RestController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-        $object = $this->getEntity($id);
-
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($object);
-        $em->flush();
+        $entity = $this->getManager()->findById($id);
+        $this->getManager()->delete($entity);
 
         return $this->response([], 204);
     }
-
-    /**
-     * Returns an entity from its ID or FALSE in case of error.
-     *
-     * @param int $id
-     * @return mixed
-     */
-    protected function getEntity($id)
-    {
-        $filters = ['id' => $id];
-        if ($this->getNewEntity() instanceof TenantAwareEntityInterface) {
-            $tenant = $this->get('multi_tenant.helper')->getCurrentTenant();
-            if ($tenant === null) {
-              throw $this->createAccessDeniedException('User not authorized or missing tenant.');
-            }
-            $filters['tenant'] = $tenant->getId();
-        }
-
-        $entity = $this->getRepository()->findOneBy($filters);
-        if ($entity === null) {
-            throw $this->createNotFoundException("Entity not found.");
-        }
-
-        return $entity;
-    }
-
 
     /**
      * Updates an entity with data from a JSON string.
@@ -211,15 +146,6 @@ abstract class RestController extends Controller
      */
     protected function updateEntity($entity, $requestData)
     {
-        $em = $this->getDoctrine()->getManager();
-        if ($em->contains($entity) === false) { // this is not a new entity, preform tenant owner check
-            if ($entity instanceof TenantAwareEntityInterface) {
-                if ($this->get('multi_tenant.helper')->isTenantObjectOwner($entity) === false) {
-                    throw $this->createAccessDeniedException('User is not allowed to modify object.');
-                }
-            }
-        }
-
         $entityInstance = new $entity;
         foreach ($requestData as $name => $value) {
             if ($name != 'id' && $name != 'tenant') {
@@ -258,7 +184,7 @@ abstract class RestController extends Controller
 
     private function validateRequest($payload, $httpMethod)
     {
-        $function = new \ReflectionClass($this->getNewEntity());
+        $function = new \ReflectionClass($this->getManager()->createClass());
         $validatorName = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $function->getShortName()));
         $this->get('app.validator.'.$validatorName)
             ->setHttpMethod($httpMethod)
@@ -277,8 +203,23 @@ abstract class RestController extends Controller
     {
         $data =
         $this->get('app.rest_response')
-            ->createResponseArray($data, $this->getNewEntity(), $request->query->get('include', []));
+            ->createResponseArray(
+                $data,
+                $this->getManager()->createClass(),
+                $request->query->get('include', [])
+            );
 
         return new JsonResponse($data, $httpCode);
+    }
+
+    public function setManager($manager)
+    {
+        $this->manager = $manager;
+        return $this;
+    }
+
+    protected function getManager()
+    {
+        return $this->manager;
     }
 }

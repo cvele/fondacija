@@ -19,9 +19,9 @@ class FileManager
 
 	protected $uploadableManager;
 
-	public function __construct(EventDispatcherInterface $dispatcher, ObjectManager $om, $class, $uploadableManager)
+	public function __construct(EventDispatcherInterface $dispatcher, ObjectManager $om, $tenantHelper, $class, $uploadableManager)
 	{
-			$this->traitConstruct($dispatcher, $om, $class);
+			$this->traitConstruct($dispatcher, $om, $tenantHelper, $class);
 			$this->uploadableManager = $uploadableManager;
 	}
 

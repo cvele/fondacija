@@ -35,13 +35,7 @@ class OrganizationTransformer extends TransformerAbstract
         return [
             'id'          => (int) $organization->getId(),
             'name'        => $organization->getName(),
-            'description' => $organization->getDescription(),
-            'links' => [
-                [
-                    'rel' => 'self',
-                    'href' => $this->router->generate('app_api_v1_organizationapi_read', ['id'=>$organization->getId()], true)
-                ]
-            ]
+            'description' => $organization->getDescription()
         ];
     }
 

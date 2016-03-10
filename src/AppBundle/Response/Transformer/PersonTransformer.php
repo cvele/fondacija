@@ -37,13 +37,7 @@ class PersonTransformer extends TransformerAbstract
             'firstname'       => $person->getFirstname(),
             'lastname'        => $person->getLastname(),
             'email'           => $person->getEmail(),
-            'organizationId'  => $person->getOrganization()->getId(),
-            'links' => [
-                [
-                    'rel' => 'self',
-                    'href' => $this->router->generate('app_api_v1_personapi_read', ['id'=>$person->getId()], true)
-                ]
-            ]
+            'organizationId'  => $person->getOrganization()->getId()
         ];
     }
 

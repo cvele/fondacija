@@ -11,7 +11,7 @@ use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
  * @ORM\Table(name="files")
  * @Gedmo\Uploadable(pathMethod="getPathCallable", callback="callback", filenameGenerator="SHA1", allowOverwrite=false, appendNumber=true)
  */
-class File implements TenantAwareEntityInterface
+class File implements TenantAwareEntityInterface, CreatorAwareInterface
 {
     /**
      * @ORM\Column(type="integer")
@@ -56,6 +56,7 @@ class File implements TenantAwareEntityInterface
     private $user;
 
     use TenantAwareEntityTrait;
+    use Traits\CreatorAwareTrait;
 
     public function getPathCallable()
     {
@@ -197,30 +198,6 @@ class File implements TenantAwareEntityInterface
     public function getPath()
     {
         return $this->path;
-    }
-
-    /**
-     * Gets the value of user.
-     *
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * Sets the value of user.
-     *
-     * @param mixed $user the user
-     *
-     * @return self
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-
-        return $this;
     }
 
 }

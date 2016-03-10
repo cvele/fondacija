@@ -7,15 +7,19 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Annotation\REST;
+use AppBundle\Annotation\RequireTenant;
 
 /**
  * @Route("/api/v1/files")
+ * @REST("app.manager.file")
  */
 class FileApiController extends RestController
 {
     /**
     * @Route("/")
     * @Method({"POST"})
+    * @RequireTenant
     */
     public function createAction(Request $request)
     {
@@ -35,6 +39,7 @@ class FileApiController extends RestController
     /**
      * @Route("/{id}")
      * @Method({"DELETE"})
+     * @RequireTenant
      */
     public function deleteAction(Request $request, $id)
     {
@@ -45,23 +50,5 @@ class FileApiController extends RestController
         $fileManager = $this->get('app.manager.file');
         $fileManager->delete($object);
         return new Response([], 204);
-    }
-
-    /**
-     * @see RestController::getRepository()
-     * @return EntityRepository
-     */
-    protected function getRepository()
-    {
-        return $this->get('app.manager.file')->getRepo();
-    }
-
-    /**
-     * @see RestController::getNewEntity()
-     * @return Object
-     */
-    protected function getNewEntity()
-    {
-        return $this->get('app.manager.file')->createClass();
     }
 }

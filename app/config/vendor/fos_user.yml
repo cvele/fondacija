@@ -7,3 +7,4 @@ fos_user:
             enabled: true
     service:
         mailer: app.fosuserbundlemandrillmailer
+        user_manager: app.manager.user

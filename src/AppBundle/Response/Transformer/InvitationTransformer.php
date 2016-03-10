@@ -18,13 +18,7 @@ class InvitationTransformer extends TransformerAbstract
             'id'        => (int) $invitation->getId(),
             'code'      => $invitation->getCode(),
             'isSent'    => $invitation->isSent(),
-            'email'     => $invitation->getEmail(),
-            'links' => [
-                [
-                    'rel' => 'self',
-                    'href' => $this->router->generate('app_api_v1_invitationapi_read', ['id'=>$invitation->getId()], true)
-                ]
-            ]
+            'email'     => $invitation->getEmail()
         ];
     }
 }

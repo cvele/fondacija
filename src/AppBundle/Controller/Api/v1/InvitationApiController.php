@@ -6,15 +6,19 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Annotation\REST;
+use AppBundle\Annotation\RequireTenant;
 
 /**
  * @Route("/api/v1/invitations")
+ * @REST("app.manager.invitation")
  */
 class InvitationApiController extends RestController
 {
   /**
    * @Route("/invitation")
    * @Method({"POST"})
+   * @RequireTenant
    */
   public function createInvitationAction(Request $request)
   {
@@ -44,21 +48,4 @@ class InvitationApiController extends RestController
       return new JsonResponse($invitation, 201);
   }
 
-  /**
-   * @see RestController::getRepository()
-   * @return EntityRepository
-   */
-  protected function getRepository()
-  {
-      return $this->get('app.manager.invitation')->getRepo();
-  }
-
-  /**
-   * @see RestController::getNewEntity()
-   * @return Object
-   */
-  protected function getNewEntity()
-  {
-      return $this->get('app.manager.invitation')->createClass();
-  }
 }

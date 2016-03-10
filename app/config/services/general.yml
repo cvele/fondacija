@@ -28,6 +28,7 @@ services:
         arguments:
           - "@event_dispatcher"
           - "@doctrine.orm.entity_manager"
+          - "@multi_tenant.helper"
           - "%app.entity.organization.class%"
 
     app.manager.person:
@@ -35,6 +36,7 @@ services:
         arguments:
           - "@event_dispatcher"
           - "@doctrine.orm.entity_manager"
+          - "@multi_tenant.helper"
           - "%app.entity.person.class%"
 
     app.manager.invitation:
@@ -42,6 +44,7 @@ services:
         arguments:
             - "@event_dispatcher"
             - "@doctrine.orm.entity_manager"
+            - "@multi_tenant.helper"
             - "%app.entity.invitation.class%"
 
     app.manager.file:
@@ -49,13 +52,23 @@ services:
         arguments:
             - "@event_dispatcher"
             - "@doctrine.orm.entity_manager"
+            - "@multi_tenant.helper"
             - "%app.entity.file.class%"
             - "@stof_doctrine_extensions.uploadable.manager"
 
+    app.manager.user:
+        class: "AppBundle\\Entity\\Manager\\UserManager"
+        arguments:
+            - "@security.encoder_factory"
+            - "@fos_user.util.username_canonicalizer"
+            - "@fos_user.util.email_canonicalizer"
+            - "@fos_user.object_manager"
+            - "@event_dispatcher"
+            - "@multi_tenant.helper"
+            - "%fos_user.model.user.class%"
+
     app.transformer_factory:
         class: "AppBundle\\Response\\TransformerFactory"
-        arguments:
-            - "@router"
 
     app.rest_response:
         class: "AppBundle\\Response\\RestResponse"
@@ -64,19 +77,48 @@ services:
 
     validator.file.not_exist:
         class: AppBundle\Validator\Constraints\FileNotExistValidator
-        arguments: ["@app.manager.file"]
+        arguments:
+            - "@app.manager.file"
         tags:
             - { name: validator.constraint_validator, alias: file_not_exist }
 
+    validator.organization.not_exist:
+        class: AppBundle\Validator\Constraints\OrganizationNotExistValidator
+        arguments:
+            - "@app.manager.organization"
+        tags:
+            - { name: validator.constraint_validator, alias: organization_not_exist }
+
     app.request.validator:
         abstract:  true
-        arguments: ["@validator"]
+        arguments:
+            - "@validator"
 
     app.validator.organization:
         class:  "AppBundle\\Request\\Validator\\OrganizationValidator"
         parent: "app.request.validator"
 
+    app.validator.person:
+        class:  "AppBundle\\Request\\Validator\\PersonValidator"
+        parent: "app.request.validator"
+
     app.annotation.controller:
         class: AppBundle\Annotation\Driver\ControllerAnnotationDriver
-        tags: [{name: kernel.event_listener, event: kernel.controller, method: onKernelController}]
-        arguments: [@annotation_reader]
+        tags:
+            - {name: kernel.event_listener, event: kernel.controller, method: onKernelController}
+        arguments:
+            - "@annotation_reader"
+
+    app.annotation.rest:
+        class: AppBundle\Annotation\Driver\RestAnnotationDriver
+        tags:
+            - {name: kernel.event_listener, event: kernel.controller, method: onKernelController}
+        arguments:
+            - "@annotation_reader"
+
+    app.doctrine.user_entity_listener:
+        class: AppBundle\Event\Listener\UserEntityListener
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }

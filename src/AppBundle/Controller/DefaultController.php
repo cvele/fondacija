@@ -120,21 +120,21 @@ class DefaultController extends Controller
 
     }
 
-    /**
-     * @Route("/login", name="login")
-     * @Template("AppBundle:Default:login.html.twig")
-     */
-    public function loginAction(Request $request)
-    {
-        return [];
-    }
-
-    /**
-     * @Route("/", name="home")
-     * @Template("AppBundle:Default:index.html.twig")
-     */
-    public function homeAction(Request $request)
-    {
-        return [];
-    }
+    // /**
+    //  * @Route("/login", name="login")
+    //  * @Template("AppBundle:Default:login.html.twig")
+    //  */
+    // public function loginAction(Request $request)
+    // {
+    //     return [];
+    // }
+    //
+    // /**
+    //  * @Route("/", name="home")
+    //  * @Template("AppBundle:Default:index.html.twig")
+    //  */
+    // public function homeAction(Request $request)
+    // {
+    //     return [];
+    // }
 }
