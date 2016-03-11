@@ -112,7 +112,7 @@ abstract class RestController extends Controller
      * @Method({"PATCH"})
      * @RequireTenant
      */
-    public function updateAction(Request $request, $id) //@TODO too meny queries here
+    public function updateAction(Request $request, $id)
     {
         $entity = $this->manager->findById($id);
         $payload = $this->parseRequest($request);
