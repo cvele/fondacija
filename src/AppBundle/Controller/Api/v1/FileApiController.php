@@ -26,29 +26,13 @@ class FileApiController extends RestController
         $uploadedFile = $this->get("request")->files->get('file', null);
 
         if (null === $uploadedFile || !($uploadedFile instanceof UploadedFile)) {
-            throw new \HttpException(400, 'Invalid argument');
+            throw new \HttpException(JsonResponse::HTTP_BAD_REQUEST, 'Invalid argument');
         }
 
         $fileManager = $this->get('app.manager.file');
         $file = $fileManager->createClass();
         $fileManager->save($file, $uploadedFile);
 
-        return new JsonResponse($this->getEntityForJson($file->getId()), 201);
-    }
-
-    /**
-     * @Route("/{id}")
-     * @Method({"DELETE"})
-     * @RequireTenant
-     */
-    public function deleteAction(Request $request, $id)
-    {
-        $object = $this->getEntity($id);
-        if (false === $object) {
-            return $this->createNotFoundException();
-        }
-        $fileManager = $this->get('app.manager.file');
-        $fileManager->delete($object);
-        return new Response([], 204);
+        return $this->response($file, JsonResponse::HTTP_CREATED, $request);
     }
 }

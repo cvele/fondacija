@@ -18,8 +18,6 @@ use AppBundle\Annotation\RequireTenant;
  */
 abstract class RestController extends Controller
 {
-    protected $manager;
-
     /**
     * Base "list" action.
     *
@@ -31,7 +29,7 @@ abstract class RestController extends Controller
     */
     public function listAction(Request $request)
     {
-        return $this->response($this->getManager()->findAll(), 200, $request);
+        return $this->response($this->manager->findAll(), JsonResponse::HTTP_OK, $request);
     }
 
     /**
@@ -44,10 +42,16 @@ abstract class RestController extends Controller
     * @Method({"GET"})
     * @RequireTenant
     */
-    public function readAction($id)
+    public function readAction(Request $request, $id)
     {
-        $request = $this->get('request');
-        return $this->response($this->getManager()->findById($id), 200, $request);
+        try {
+            $result = $this->manager
+                            ->findById($id)
+                            ->getSingleResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            throw $this->createNotFoundException("Resource not found.");
+        }
+        return $this->response($result, JsonResponse::HTTP_OK, $request);
     }
 
     /**
@@ -62,12 +66,12 @@ abstract class RestController extends Controller
     */
     public function createAction(Request $request)
     {
-        $entity = $this->getManager()->createClass();
+        $entity = $this->manager->createClass();
         $payload = $this->parseRequest($request);
         $entity = $this->updateEntity($entity, $payload);
-        $this->getManager()->save($entity);
+        $this->manager->save($entity);
 
-        return $this->response($entity, 201, $request);
+        return $this->response($entity, JsonResponse::HTTP_CREATED, $request);
     }
 
     /**
@@ -81,10 +85,10 @@ abstract class RestController extends Controller
      */
     public function attachAction(Request $request, $id, $fileId)
     {
-        $entity = $this->getManager()->findById($id);
+        $entity = $this->manager->findById($id);
 
         if (!$entity instanceof AttachableEntityInterface) {
-          throw new HttpException(405, 'Attach method is not supported on this entity.');
+          throw new HttpException(JsonResponse::HTTP_METHOD_NOT_ALLOWED, 'Attach method is not supported on this entity.');
         }
 
         $fileManager = $this->get('app.manager.file');
@@ -94,7 +98,7 @@ abstract class RestController extends Controller
         }
         $fileManager->attach($file, $object);
 
-        return $this->response([], 204);
+        return $this->response([], JsonResponse::HTTP_NO_CONTENT, $request);
     }
 
 
@@ -110,12 +114,12 @@ abstract class RestController extends Controller
      */
     public function updateAction(Request $request, $id) //@TODO too meny queries here
     {
-        $entity = $this->getManager()->findById($id);
+        $entity = $this->manager->findById($id);
         $payload = $this->parseRequest($request);
         $entity = $this->updateEntity($entity, $payload);
-        $this->getManager()->save($entity);
+        $this->manager->save($entity);
 
-        return $this->response($this->getEntity($entity->getId()), 200);
+        return $this->response($this->getEntity($entity->getId()), JsonResponse::HTTP_OK, $request);
     }
 
     /**
@@ -129,10 +133,14 @@ abstract class RestController extends Controller
      */
     public function deleteAction(Request $request, $id)
     {
-        $entity = $this->getManager()->findById($id);
-        $this->getManager()->delete($entity);
+        try {
+            $entity = $this->manager->findById($id)->getSingleResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            throw $this->createNotFoundException("Resource not found.");
+        }
+        $this->manager->delete($entity);
 
-        return $this->response([], 204);
+        return $this->response([], JsonResponse::HTTP_NO_CONTENT, $request);
     }
 
     /**
@@ -147,7 +155,7 @@ abstract class RestController extends Controller
     {
         $entityInstance = new $entity;
         foreach ($requestData as $name => $value) {
-            if ($name != 'id' && $name != 'tenant') {
+            if ($name !== 'id' && $name !== 'tenant' && $name != 'user') {
                 $setter = 'set' . ucfirst($name);
                 if (method_exists($entity, $setter)) {
                     $entityInstance->$setter($value);
@@ -169,6 +177,26 @@ abstract class RestController extends Controller
 
         $this->validateRequest($payload, $request->getMethod());
 
+        $entity = $this->manager->createClass();
+        $entityManger = $this->getDoctrine()->getManager();
+        $entityMetadata = $entityManger->getClassMetadata(get_class($entity));
+        foreach ($payload as $parameter => $value) {
+            try {
+                $filedTargetClass = $entityMetadata->getAssociationTargetClass($parameter);
+            } catch (\InvalidArgumentException $e) {
+                continue;
+            }
+
+            if ($filedTargetClass === false || $filedTargetClass === null) {
+                continue;
+            }
+
+            $targetEntity = $entityManger->getRepository($filedTargetClass)->find($value);
+
+            $payload[$parameter] = $targetEntity;
+        }
+
+
         $error = json_last_error();
 		if ($error && $error !== JSON_ERROR_NONE) {
 			throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, sprintf("Invalid json payload supplied. Error: '%s'", (string) $error));
@@ -183,7 +211,7 @@ abstract class RestController extends Controller
 
     private function validateRequest($payload, $httpMethod)
     {
-        $function = new \ReflectionClass($this->getManager()->createClass());
+        $function = new \ReflectionClass($this->manager->createClass());
         $validatorName = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $function->getShortName()));
         $this->get('app.validator.'.$validatorName)
             ->setHttpMethod($httpMethod)
@@ -198,27 +226,23 @@ abstract class RestController extends Controller
      * @param integer $httpCode
      * @return JsonResponse
      */
-    protected function response($data, $httpCode = 200, $request = null)
+    protected function response($data, $httpCode = JsonResponse::HTTP_OK, $request)
     {
+        $limit = $request->query->get('limit', 10);
+        $page = $request->query->get('page', 1);
+
         $data =
         $this->get('app.rest_response')
             ->createResponseArray(
                 $data,
-                $this->getManager()->createClass(),
-                $request->query->get('include', [])
+                $this->manager->createClass(),
+                $request->query->get('include', []),
+                [
+                    'limit' => (int) $limit,
+                    'page' => (int) $page
+                ]
             );
 
         return new JsonResponse($data, $httpCode);
-    }
-
-    public function setManager($manager)
-    {
-        $this->manager = $manager;
-        return $this;
-    }
-
-    protected function getManager()
-    {
-        return $this->manager;
     }
 }

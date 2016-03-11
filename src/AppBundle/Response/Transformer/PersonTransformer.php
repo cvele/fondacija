@@ -71,7 +71,7 @@ class PersonTransformer extends TransformerAbstract
      */
     public function includeOrganization(Person $person)
     {
-        return $this->item($person->getOrganization(), new TenantTransformer);
+        return $this->item($person->getOrganization(), new OrganizationTransformer);
     }
 
     /**

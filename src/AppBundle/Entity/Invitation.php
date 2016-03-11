@@ -7,7 +7,7 @@ use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
 use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\InvitationRepository")
  * @ORM\Table(name="user_invitations")
  */
 class Invitation implements TenantAwareEntityInterface

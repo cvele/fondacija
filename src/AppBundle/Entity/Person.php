@@ -82,13 +82,13 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface, C
     private $skype;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Organization", inversedBy="persons")
+     * @ORM\ManyToOne(targetEntity="Organization", inversedBy="persons", fetch="EAGER")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", nullable=false)
      */
     private $organization;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="persons")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="persons", fetch="EAGER")
      * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=false)
      */
     private $user;

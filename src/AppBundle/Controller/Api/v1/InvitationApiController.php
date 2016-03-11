@@ -32,20 +32,18 @@ class InvitationApiController extends RestController
       $invitationManager = $this->get('app.manager.invitation');
 
       $body = $this->getJsonFromRequest();
-
       $user = $userManager->findUserByEmail($body->email);
 
       if ($user !== null) { // this is an existing user and we should just add to tenant
         $tenantHelper->addUserToTenant($user, $tenantHelper->getCurrentTenant());
-        return new JsonResponse([], 200);
+        return $this->response([], JsonResponse::HTTP_OK, $request);
       }
 
       $invitation = $invitationManager->createClass();
       $invitation->setEmail($email);
       $invitationManager->save($invitation);
       // Email is being dispatched via event listener
-
-      return new JsonResponse($invitation, 201);
+      return $this->response($invitation, JsonResponse::HTTP_CREATED, $request);
   }
 
 }

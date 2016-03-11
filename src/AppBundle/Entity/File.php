@@ -7,7 +7,7 @@ use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
 use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\FileRepository")
  * @ORM\Table(name="files")
  * @Gedmo\Uploadable(pathMethod="getPathCallable", callback="callback", filenameGenerator="SHA1", allowOverwrite=false, appendNumber=true)
  */
@@ -50,7 +50,7 @@ class File implements TenantAwareEntityInterface, CreatorAwareInterface
     protected $text;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="files")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="files", fetch="EAGER")
      * @ORM\JoinColumn(name="creator_id", referencedColumnName="id")
      */
     private $user;

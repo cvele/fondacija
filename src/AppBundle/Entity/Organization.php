@@ -45,8 +45,8 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     private $persons;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="organizations")
-     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true)
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="organizations", fetch="EAGER")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=false)
      */
     private $user;
 

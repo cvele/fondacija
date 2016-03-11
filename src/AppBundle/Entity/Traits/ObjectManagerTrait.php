@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Traits;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
+use Cvele\MultiTenantBundle\Model\TenantAwareUserInterface;
 use Cvele\MultiTenantBundle\Helper\TenantHelper;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Event\EntityEvent;
@@ -73,26 +74,38 @@ trait ObjectManagerTrait
 
     public function findByTenant(Tenant $tenant)
     {
-        return $this->getRepo()->findBy(['tenant'=>$tenant]);
+        return $this->getRepo()->findAllWithTenant(['tenantId' => $tenant]);
     }
 
-    public function findById($id)
+    public function findAll()
     {
-        $filters = ['id' => $id];
-        if ($this->createClass() instanceof TenantAwareEntityInterface) {
+        $class = $this->createClass();
+        if ($class instanceof TenantAwareEntityInterface || $class instanceof TenantAwareUserInterface) {
             $tenant = $this->tenantHelper->getCurrentTenant();
             if ($tenant === null) {
               throw new \Exception('User not authorized or missing tenant.');
             }
-            $filters['tenant'] = $tenant->getId();
+            return $this->getRepo()->findAllWithTenant($tenant->getId());
+        } else {
+            return $this->getRepo()->findAll();
+        }
+    }
+
+    public function findById($id)
+    {
+        $class = $this->createClass();
+        if ($class instanceof TenantAwareEntityInterface || $class instanceof TenantAwareUserInterface) {
+            $tenant = $this->tenantHelper->getCurrentTenant();
+            if ($tenant === null) {
+              throw new \Exception('User not authorized or missing tenant.');
+            }
+            $query = $this->getRepo()->findByIdAndTenant((int) $id, $tenant->getId());
+        } else {
+            $query = $this->getRepo()->findById($id);
         }
 
-        $entity = $this->getRepo()->findOneBy($filters);
-        if ($entity === null) {
-            return false;
-        }
 
-        return $entity;
+        return $query;
     }
 
     public function save($entity, $event_name = 'app.entity.saved')

@@ -30,7 +30,7 @@ class RestAnnotationDriver {
                 }
 
                 $manager = $controller[0]->get($configuration->manager);
-                $controller[0]->setManager($manager);
+                $controller[0]->manager = $manager;
              }
          }
     }

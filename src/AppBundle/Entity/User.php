@@ -11,7 +11,7 @@ use Cvele\MultiTenantBundle\Model\Traits\TenantAwareUserTrait;
 use Cvele\MultiTenantBundle\Model\TenantAwareUserInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\UserRepository")
  * @ORM\Table(name="users")
  */
 class User extends BaseUser implements TenantAwareUserInterface

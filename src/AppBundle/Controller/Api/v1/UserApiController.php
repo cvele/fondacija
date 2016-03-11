@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Api\v1;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use AppBundle\Annotation\RequireTenant;
@@ -20,7 +21,7 @@ class UserApiController extends RestController
    * @Method({"GET"})
    * @RequireTenant
    */
-  public function readAction($id)
+  public function readAction(Request $request, $id)
   {
       if ($id === 'me') {
           $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -62,7 +63,7 @@ class UserApiController extends RestController
       $userManager->updatePassword($user);
       $userManager->updateUser($user);
 
-      return new JsonResponse($this->getEntityForJson($user->getId()), 201);
+      return $this->response($user, 201, $request);
   }
-  
+
 }

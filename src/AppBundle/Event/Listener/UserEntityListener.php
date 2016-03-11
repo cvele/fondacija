@@ -22,6 +22,10 @@ class UserEntityListener
         return;
       }
 
+      if ($entity->getUser() !== null) {
+          return;
+      }
+
       $user = $this->tokenStorage->getToken()->getUser();
       if (empty($user)) {
         return;
