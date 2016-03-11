@@ -64,6 +64,11 @@ trait ObjectManagerTrait
         return $this->repo;
     }
 
+    public function getClassName()
+    {
+        return $this->className;
+    }
+
     public function createClass()
     {
         $className = $this->className;
@@ -106,6 +111,22 @@ trait ObjectManagerTrait
 
 
         return $query;
+    }
+
+
+    public function applyPayloadToEntity($entity, $payload)
+    {
+        $entityInstance = new $entity;
+        foreach ($payload as $name => $value) {
+            if ($name !== 'id' && $name !== 'tenant' && $name != 'user') {
+                $setter = 'set' . ucfirst($name);
+                if (method_exists($entity, $setter)) {
+                    $entityInstance->$setter($value);
+                }
+            }
+        }
+
+        return $entityInstance;
     }
 
     public function save($entity, $event_name = 'app.entity.saved')

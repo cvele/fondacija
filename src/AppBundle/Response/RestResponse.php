@@ -47,8 +47,12 @@ class RestResponse
     {
         $url = $this->request->getUri();
         $url_parts = parse_url($url);
-        parse_str($url_parts['query'], $params);
+        $params = [];
+        if (isset($url_parts['query'])) {
+            parse_str($url_parts['query'], $params);
+        }
         $params['page'] =  $page;
+        
         $url_parts['query'] = http_build_query($params);
 
         $url = $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];

@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use AppBundle\Entity\AttachableEntityInterface;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use AppBundle\Annotation\RequireTenant;
 
 /**
@@ -68,7 +67,7 @@ abstract class RestController extends Controller
     {
         $entity = $this->manager->createClass();
         $payload = $this->parseRequest($request);
-        $entity = $this->updateEntity($entity, $payload);
+        $entity = $this->manager->applyPayloadToEntity($entity, $payload);
         $this->manager->save($entity);
 
         return $this->response($entity, JsonResponse::HTTP_CREATED, $request);
@@ -116,7 +115,7 @@ abstract class RestController extends Controller
     {
         $entity = $this->manager->findById($id);
         $payload = $this->parseRequest($request);
-        $entity = $this->updateEntity($entity, $payload);
+        $entity = $this->manager->applyPayloadToEntity($entity, $payload);
         $this->manager->save($entity);
 
         return $this->response($this->getEntity($entity->getId()), JsonResponse::HTTP_OK, $request);
@@ -144,28 +143,6 @@ abstract class RestController extends Controller
     }
 
     /**
-     * Updates an entity with data from a JSON string.
-     * Returns the entity, or FALSE in case of error.
-     *
-     * @param Object $entity
-     * @param string $requestData
-     * @return Object|boolean
-     */
-    protected function updateEntity($entity, $requestData)
-    {
-        $entityInstance = new $entity;
-        foreach ($requestData as $name => $value) {
-            if ($name !== 'id' && $name !== 'tenant' && $name != 'user') {
-                $setter = 'set' . ucfirst($name);
-                if (method_exists($entity, $setter)) {
-                    $entityInstance->$setter($value);
-                }
-            }
-        }
-
-        return $entityInstance;
-    }
-    /**
      * Returns the parsed payload.
      *
      * @throws HttpException
@@ -173,46 +150,54 @@ abstract class RestController extends Controller
      */
     protected function parseRequest(Request $request)
     {
-        $payload = json_decode($request->getContent(), true);
-
+        $payload = $request->getJsonPayload();
         $this->validateRequest($payload, $request->getMethod());
 
-        $entity = $this->manager->createClass();
         $entityManger = $this->getDoctrine()->getManager();
-        $entityMetadata = $entityManger->getClassMetadata(get_class($entity));
+        $entityClassName = $this->manager->getClassName();
+        $apcKey = "entity_metadata_" . $entityClassName;
+        if (apc_exists($apcKey) === false) {
+            $entityMetadata = $entityManger->getClassMetadata($entityClassName);
+            apc_add($apcKey, $entityMetadata, 0);
+        } else {
+            $entityMetadata = apc_fetch($apcKey);
+        }
         foreach ($payload as $parameter => $value) {
-            try {
-                $filedTargetClass = $entityMetadata->getAssociationTargetClass($parameter);
-            } catch (\InvalidArgumentException $e) {
+            $apcKey = "entity_assoc_class_" . $entityClassName . "_" . $parameter;
+            if (apc_exists($apcKey) === false) {
+                try {
+                    $fieldTargetClass = $entityMetadata->getAssociationTargetClass($parameter);
+                    apc_add($apcKey, $fieldTargetClass, 0);
+                } catch (\InvalidArgumentException $e) {
+                    apc_add($apcKey, null, 0);
+                    continue;
+                }
+            } else {
+                $fieldTargetClass = apc_fetch($apcKey);
+            }
+
+            if ($fieldTargetClass === false || $fieldTargetClass === null) {
                 continue;
             }
 
-            if ($filedTargetClass === false || $filedTargetClass === null) {
-                continue;
-            }
-
-            $targetEntity = $entityManger->getRepository($filedTargetClass)->find($value);
-
+            $targetEntity = $entityManger->getRepository($fieldTargetClass)->find($value);
             $payload[$parameter] = $targetEntity;
         }
-
-
-        $error = json_last_error();
-		if ($error && $error !== JSON_ERROR_NONE) {
-			throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, sprintf("Invalid json payload supplied. Error: '%s'", (string) $error));
-		}
-
-        if (!is_array($payload) && !is_object($payload)) {
-			throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, "Invalid json payload supplied. Error: 'JSON must be array or object'. '%s'", $this->get("request")->getContent());
-		}
 
         return $payload;
     }
 
     private function validateRequest($payload, $httpMethod)
     {
-        $function = new \ReflectionClass($this->manager->createClass());
-        $validatorName = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $function->getShortName()));
+        $apcKey = $this->manager->getClassName() . "_entity_validator";
+        if (apc_exists($apcKey) === false) {
+            $function = new \ReflectionClass($this->manager->createClass());
+            $validatorName = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $function->getShortName()));
+            apc_add($apcKey, $validatorName, 0);
+        } else {
+            $validatorName = apc_fetch($apcKey);
+        }
+
         $this->get('app.validator.'.$validatorName)
             ->setHttpMethod($httpMethod)
             ->setPayload($payload)

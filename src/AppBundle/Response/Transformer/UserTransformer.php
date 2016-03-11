@@ -7,14 +7,6 @@ use League\Fractal\TransformerAbstract;
 
 class UserTransformer extends TransformerAbstract
 {
-    /**
-     * List of resources to automatically include
-     *
-     * @var array
-     */
-    protected $defaultIncludes = [
-        'tenants'
-    ];
 
     /**
      * List of resources possible to include
@@ -22,7 +14,7 @@ class UserTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'persons', 'organizations', 'files'
+        'persons', 'organizations', 'files', 'tenants'
     ];
 
     /**
@@ -37,8 +29,7 @@ class UserTransformer extends TransformerAbstract
             'username'  => $user->getUsername(),
             'email'     => $user->getEmail(),
             'lastLogin' => $user->getLastLogin(),
-            'enabled'   => (bool) $user->isEnabled(),
-            'tenant'    => $user->getTenant()
+            'enabled'   => (bool) $user->isEnabled()
         ];
     }
 

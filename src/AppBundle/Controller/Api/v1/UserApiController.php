@@ -30,7 +30,7 @@ class UserApiController extends RestController
           }
           $id = $user->getId();
       }
-      return parent::readAction($id);
+      return parent::readAction($request, $id);
   }
 
   /**

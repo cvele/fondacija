@@ -1,6 +1,6 @@
 <?php
 
-use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Request\Request;
 use Symfony\Component\ClassLoader\ApcClassLoader;
 
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
