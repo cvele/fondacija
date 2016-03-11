@@ -50,7 +50,7 @@ class UserApiController extends RestController
 
       $invitation = $invitationManager->getRepo()->find(['code' => $data->invitation]);
       if (empty($invitation)) {
-        throw new HttpException(400, "Invalid invitation code.");
+        throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, "Invalid invitation code.");
       }
 
       $user = $userManager->createUser();
