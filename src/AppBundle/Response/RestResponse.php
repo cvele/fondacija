@@ -16,25 +16,30 @@ class RestResponse
         $this->transformerFactory = $transformerFactory;
     }
 
-    public function createResponseArray($data, $entity, $include, $pagerOptions = [])
+    public function createResponseArray($data, $entity, $request)
     {
         $fractal = new Manager();
-        $fractal->parseIncludes($include);
+        $fractal->parseIncludes($request->query->get('include', []));
         $fractal->setSerializer(new ArraySerializer());
         $transformer = $this->transformerFactory->get($entity);
 
         if ($data instanceof \Doctrine\ORM\Query) {
             $adapter = new \Pagerfanta\Adapter\DoctrineORMAdapter($data);
             $pager = new \Pagerfanta\Pagerfanta($adapter);
-            $pager->setMaxPerPage($pagerOptions['limit']);
-            $pager->setCurrentPage($pagerOptions['page']);
+            $pager->setMaxPerPage($request->query->get('limit', 10));
+            $pager->setCurrentPage($request->query->get('page', 1));
             $results = $pager->getCurrentPageResults();
 
             $resource = new Collection($results, $transformer);
             $resource->setPaginator(new \League\Fractal\Pagination\PagerfantaPaginatorAdapter($pager, function($page){
-                $url = $_SERVER['REQUEST_URI'];
-                $url = str_replace("page=" . $_GET["page"], "page=" . $page, $url);
-                $url = preg_replace("#&+#", "&", $url);
+                global $request;
+                $url = $request->getUri();
+                $url_parts = parse_url($url);
+                parse_str($url_parts['query'], $params);
+                $params['page'] =  $request->query->get('page', $page + 1);
+                $url_parts['query'] = http_build_query($params);
+
+                $url = $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
                 return $url;
             }));
         } elseif (is_array($data)) {

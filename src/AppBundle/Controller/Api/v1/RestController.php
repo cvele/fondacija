@@ -228,19 +228,12 @@ abstract class RestController extends Controller
      */
     protected function response($data, $httpCode = JsonResponse::HTTP_OK, $request)
     {
-        $limit = $request->query->get('limit', 10);
-        $page = $request->query->get('page', 1);
-
         $data =
         $this->get('app.rest_response')
             ->createResponseArray(
                 $data,
                 $this->manager->createClass(),
-                $request->query->get('include', []),
-                [
-                    'limit' => (int) $limit,
-                    'page' => (int) $page
-                ]
+                $request
             );
 
         return new JsonResponse($data, $httpCode);
