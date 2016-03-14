@@ -28,25 +28,11 @@ security:
         pattern:  ^/(_(profiler|wdt)|css|images|js)/
         security: false
     api:
-        pattern:    ^/api
+        pattern:    ^\/api\/v1\/(?!(users\/invitation_register|users\/send_reset_email)\b).*
         fos_oauth:  true
         stateless:  true
         anonymous:  false # can be omitted as its default value
-    main:
-        pattern:        ^/
-        switch_user:    true
-        anonymous:      ~
-        form_login:
-            provider:   fos_userbundle
-            csrf_token_generator: security.csrf.token_manager
-            login_path: /login
-        logout:         true
-        anonymous:      true
 
   access_control:
     - { path: ^/api, roles: [ IS_AUTHENTICATED_FULLY ] }
     - { path: ^/, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/profile, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/resetting, roles: IS_AUTHENTICATED_ANONYMOUSLY }

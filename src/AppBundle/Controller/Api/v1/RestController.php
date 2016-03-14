@@ -148,10 +148,12 @@ abstract class RestController extends Controller
      * @throws HttpException
      * @return string|boolean
      */
-    protected function parseRequest(Request $request)
+    protected function parseRequest(Request $request, $bypassValidate = false)
     {
         $payload = $request->getJsonPayload();
-        $this->validateRequest($payload, $request->getMethod());
+        if ($bypassValidate !== true) {
+            $this->validateRequest($payload, $request->getMethod());
+        }
 
         $entityManger = $this->getDoctrine()->getManager();
         $entityClassName = $this->manager->getClassName();

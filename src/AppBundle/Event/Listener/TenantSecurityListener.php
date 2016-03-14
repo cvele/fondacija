@@ -36,6 +36,10 @@ class TenantSecurityListener
             return;
         }
 
+        if (isset($entity->bypassTenantSecurity) && $entity->bypassTenantSecurity === true) {
+            return;
+        }
+
         $entityManager = $args->getEntityManager();
 
         if ($entityManager->contains($entity) !== false) { // this is not a new entity, preform tenant owner check

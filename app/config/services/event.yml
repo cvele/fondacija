@@ -14,7 +14,7 @@ services:
 
     app.entity_event.file_attached_listener:
         class: AppBundle\Event\Listener\FileAttachedListener
-        arguments: ["@app.manager.file", "app.apache_tika"]
+        arguments: ["@app.manager.file", "@app.apache_tika"]
         tags:
         - { name: kernel.event_listener, event: app.file.attached, method: processApacheTika }
 

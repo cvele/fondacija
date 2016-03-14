@@ -32,6 +32,8 @@ class Invitation implements TenantAwareEntityInterface
      */
     protected $sent = false;
 
+    public $bypassTenantSecurity = true;
+
     use TenantAwareEntityTrait;
 
     public function __construct()

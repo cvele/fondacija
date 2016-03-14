@@ -75,6 +75,20 @@ services:
         arguments:
             - "@app.transformer_factory"
 
+    validator.user.unique_email:
+        class: AppBundle\Validator\Constraints\UniqueEmailValidator
+        arguments:
+            - "@app.manager.user"
+        tags:
+            - { name: validator.constraint_validator, alias: unique_email }
+
+    validator.user.invitation_valid:
+        class: AppBundle\Validator\Constraints\InvitationValidValidator
+        arguments:
+            - "@app.manager.invitation"
+        tags:
+            - { name: validator.constraint_validator, alias: invitation_valid }
+
     validator.file.not_exist:
         class: AppBundle\Validator\Constraints\FileNotExistValidator
         arguments:
@@ -96,6 +110,10 @@ services:
 
     app.validator.organization:
         class:  "AppBundle\\Request\\Validator\\OrganizationValidator"
+        parent: "app.request.validator"
+
+    app.validator.user:
+        class:  "AppBundle\\Request\\Validator\\UserValidator"
         parent: "app.request.validator"
 
     app.validator.person:

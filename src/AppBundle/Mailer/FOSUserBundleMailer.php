@@ -78,6 +78,24 @@ class FOSUserBundleMailer implements MailerInterface
 		$this->sendEmailMessage($rendered, $user->getEmail());
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function sendResettingEmailMessageApi(UserInterface $user, $url)
+	{
+		$template = $this->parameters['resetting_password.template'];
+
+		$url = str_replace("{token}", $user->getConfirmationToken(), $url);
+
+		$rendered = $this->templating->render($template, array(
+			'confirmationUrl' => $url,
+			'user'            => $user
+		));
+
+		$this->sendEmailMessage($rendered, $user->getEmail());
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */

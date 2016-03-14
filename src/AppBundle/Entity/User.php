@@ -27,6 +27,16 @@ class User extends BaseUser implements TenantAwareUserInterface
     protected $id;
 
     /**
+     * @ORM\Column(type="string", length=140, name="firstname", nullable=false)
+     */
+    protected $firstname;
+
+    /**
+     * @ORM\Column(type="string", length=140, name="lastname", nullable=false)
+     */
+    protected $lastname;
+
+    /**
      * @ORM\OneToMany(targetEntity="Person", mappedBy="user")
      */
     private $persons;
@@ -108,4 +118,53 @@ class User extends BaseUser implements TenantAwareUserInterface
     {
         return $this->organizations;
     }
+
+    /**
+     * Get the value of Firstname
+     *
+     * @return mixed
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * Set the value of Firstname
+     *
+     * @param mixed firstname
+     *
+     * @return self
+     */
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Lastname
+     *
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * Set the value of Lastname
+     *
+     * @param mixed lastname
+     *
+     * @return self
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
 }
