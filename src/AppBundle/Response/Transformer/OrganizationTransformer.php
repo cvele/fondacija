@@ -13,7 +13,7 @@ class OrganizationTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'user', 'tenant'
+        'user', 'tenant', 'logo'
     ];
 
     /**
@@ -35,7 +35,11 @@ class OrganizationTransformer extends TransformerAbstract
         return [
             'id'          => (int) $organization->getId(),
             'name'        => $organization->getName(),
-            'description' => $organization->getDescription()
+            'description' => $organization->getDescription(),
+            'personCount' => $organization->getNumPersons(),
+            'fileCount'   => $organization->getNumFiles(),
+            'createdAt'   => $organization->getCreatedAt(),
+            'updatedAt'   => $organization->getUpdatedAt(),
         ];
     }
 
@@ -73,7 +77,18 @@ class OrganizationTransformer extends TransformerAbstract
     }
 
     /**
-     * Include Persons
+     * Include Logo
+     *
+     * @param Organization $organization
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeLogo(Organization $organization)
+    {
+        return $this->item($organization->getLogo(), new FileTransformer);
+    }
+
+    /**
+     * Include Files
      *
      * @param Organization $organization
      * @return \League\Fractal\Resource\Collection

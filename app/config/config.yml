@@ -3,11 +3,12 @@ imports:
     - { resource: security.yml }
     - { resource: vendor/fos_user.yml }
     - { resource: vendor/mandrill.yml }
-    # - { resource: vendor/fos_elastica.yml }
+    - { resource: vendor/fos_elastica.yml }
     - { resource: vendor/cvele_tenant.yml }
     - { resource: vendor/oauth.yml }
     - { resource: vendor/cors.yml }
     - { resource: vendor/doctrine_extensions.yml }
+    - { resource: vendor/imagine.yml }
     - { resource: services/event.yml }
     - { resource: services/general.yml }
 

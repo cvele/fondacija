@@ -28,6 +28,8 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
 
             new Hip\MandrillBundle\HipMandrillBundle(),
+            
+            new Liip\ImagineBundle\LiipImagineBundle(),
 
             new Cvele\MultiTenantBundle\MultiTenantBundle(),
             new AppBundle\AppBundle(),

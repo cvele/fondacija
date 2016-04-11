@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
 use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Person
@@ -82,33 +81,25 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface, C
     private $skype;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Organization", inversedBy="persons", fetch="EAGER")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Organization", inversedBy="persons", fetch="LAZY")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $organization;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="persons", fetch="EAGER")
-     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="persons", fetch="LAZY")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $user;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="File")
-     * @ORM\JoinTable(name="person_files",
-     *      joinColumns={@ORM\JoinColumn(name="person_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", unique=true)}
-     *      )
-     */
-    private $files;
 
     use TimestampableEntity;
     use TenantAwareEntityTrait;
     use Traits\CreatorAwareTrait;
+    use Traits\AttachableEntityTrait;
 
     public function __construct()
     {
-        $this->files = new ArrayCollection();
+        $this->init();
     }
 
     /**
@@ -335,20 +326,5 @@ class Person implements TenantAwareEntityInterface, AttachableEntityInterface, C
         $this->organization = $organization;
 
         return $this;
-    }
-
-    public function getFiles()
-    {
-        return $this->files;
-    }
-
-    public function addFile(File $file)
-    {
-        $this->files->add($file);
-    }
-
-    public function removeFile(File $file)
-    {
-        $this->files->removeElement($file);
     }
 }

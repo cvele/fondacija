@@ -12,10 +12,10 @@ nelmio_cors:
         '^/oauth/v2':
             allow_origin: ['*']
             allow_headers: ['*']
-            allow_methods: ['POST', 'GET', 'OPTIONS']
+            allow_methods: ['POST', 'GET']
             max_age: 3600
         '^/api/v1':
             allow_origin: ['*']
             allow_headers: ['*']
-            allow_methods: ['POST', 'GET', 'DELETE', 'PUT', 'OPTIONS']
+            allow_methods: ['POST', 'GET', 'DELETE', 'PUT', 'PATCH', 'LINK', 'UNLINK']
             max_age: 3600

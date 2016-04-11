@@ -40,11 +40,15 @@ class TenantSecurityListener
             return;
         }
 
+        if ($this->session->get('tenant_id') === null) {
+            return;
+        }
+
         $entityManager = $args->getEntityManager();
 
         if ($entityManager->contains($entity) !== false) { // this is not a new entity, preform tenant owner check
             if ($entity->getTenant()->getId() !== $this->session->get('tenant_id')) {
-                throw new AccessDeniedHttpException('User is not allowed to access object.');
+                throw new AccessDeniedHttpException('User is not allowed to access object['.get_class($entity).'('.$entity->getId().')].');
             }
         }
     }

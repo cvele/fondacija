@@ -13,6 +13,15 @@ class UserValidator extends RequestValidator
         return new Constraints\Collection([
             'allowMissingFields' => (boolean) (strtolower($httpMethod) === 'patch'),
             'fields' => [
+                'id' => [
+                    new Constraints\Optional(
+                        [
+                            new Constraints\Type([
+                                'type' => 'integer'
+                            ]),
+                        ]
+                    )
+                ],
                 'code' => [
                     new Constraints\Optional(
                         [
@@ -20,6 +29,16 @@ class UserValidator extends RequestValidator
                                 'message' => "Invitation is required and must not be empty."
                             ]),
                             new InvitationValid(),
+                        ]
+                    )
+                ],
+                'avatar' => [
+                    new Constraints\Optional(
+                        [
+                            new Constraints\Image([
+                                'maxSize'        => "1024k",
+                                'maxSizeMessage' => 'The avatar is too large ({{ size }} {{ suffix }}). Allowed maximum size is {{ limit }} {{ suffix }}.',
+                            ])
                         ]
                     )
                 ],
@@ -62,7 +81,7 @@ class UserValidator extends RequestValidator
                             new Constraints\Email([
                                 'message' => "Email address is not valid."
                             ]),
-                            new UniqueEmail(),
+                            new UniqueEmail($httpMethod),
                         ]
                     )
                 ],

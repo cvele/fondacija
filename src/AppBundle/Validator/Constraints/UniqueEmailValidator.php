@@ -16,6 +16,9 @@ class UniqueEmailValidator extends ConstraintValidator
 
     public function validate($value, Constraint $constraint)
     {
+        if (in_array($constraint->httpMethod, ['POST', 'PATCH'])) {
+            return;
+        }
         $isEmailUnique = $this->manager->findUserByEmail($value);
         if ($isEmailUnique !== null) {
             $this->context->addViolation(

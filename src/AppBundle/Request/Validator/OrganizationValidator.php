@@ -11,6 +11,7 @@ class OrganizationValidator extends RequestValidator
     {
         return new Constraints\Collection([
             'allowMissingFields' => (boolean) (strtolower($httpMethod) === 'patch'),
+            'allowExtraFields' =>  (boolean) (strtolower($httpMethod) === 'patch'),
             'fields' => [
                 'name' => [
                     new Constraints\Required(

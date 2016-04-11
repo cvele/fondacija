@@ -82,7 +82,7 @@ trait ObjectManagerTrait
         return $this->getRepo()->findAllWithTenant(['tenantId' => $tenant]);
     }
 
-    public function findAll()
+    public function findAll($orderBy = null)
     {
         $class = $this->createClass();
         if ($class instanceof TenantAwareEntityInterface || $class instanceof TenantAwareUserInterface) {
@@ -90,9 +90,9 @@ trait ObjectManagerTrait
             if ($tenant === null) {
               throw new \Exception('User not authorized or missing tenant.');
             }
-            return $this->getRepo()->findAllWithTenant($tenant->getId());
+            return $this->getRepo()->findAllWithTenant($tenant->getId(), $orderBy);
         } else {
-            return $this->getRepo()->findAll();
+            return $this->getRepo()->findAll($orderBy);
         }
     }
 
@@ -116,17 +116,16 @@ trait ObjectManagerTrait
 
     public function applyPayloadToEntity($entity, $payload)
     {
-        $entityInstance = new $entity;
         foreach ($payload as $name => $value) {
             if ($name !== 'id' && $name !== 'tenant' && $name != 'user') {
                 $setter = 'set' . ucfirst($name);
                 if (method_exists($entity, $setter)) {
-                    $entityInstance->$setter($value);
+                    $entity->$setter($value);
                 }
             }
         }
 
-        return $entityInstance;
+        return $entity;
     }
 
     public function save($entity, $event_name = 'app.entity.saved')

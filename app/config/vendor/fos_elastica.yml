@@ -1,69 +1,42 @@
 fos_elastica:
+    serializer: ~
     clients:
         default: { host: localhost, port: 9200 }
     indexes:
         app:
             finder: ~
-            index_name: fondacija_%kernel.environment%
+            index_name: app_%kernel.environment%
+            settings:
+                index:
+                    analysis:
+                        analyzer:
+                        index_analyzer:
+                            tokenizer: "nGram"
+                            filter:  ["lowercase", "snowball"]
+                        search_analyzer:
+                            tokenizer: "nGram"
+                            filter:  ["lowercase", "snowball"]
+                        filter:
+                            snowball:
+                                type: "snowball"
+                                language: "English"
             types:
-                document:
-                    mappings:
-                        title: ~
-                        description: ~
-                        mimeType: ~
-                        originalFileName: ~
-                        fileText:
-                            type: attachment
-                        tenant:
-                            type: "nested"
-                            properties:
-                                id: ~
-                    persistence:
-                        driver: orm
-                        model: AppBundle\Entity\Document
-                        provider: ~
-                        listener: ~
-                        finder: ~
-                user:
-                    mappings:
-                        username: ~
-                        tenant:
-                            type: "nested"
-                            properties:
-                                id: ~
-                    persistence:
-                        driver: orm
-                        model: AppBundle\Entity\User
-                        provider: ~
-                        listener: ~
-                        finder: ~
-                company:
+                organization:
                     mappings:
                         name: ~
+                        description: ~
+                        createdAt:
+                            type: date
+                        id:
+                            type: integer
                         tenant:
-                            type: "nested"
+                            type: "object"
                             properties:
-                                id: ~
+                                id:
+                                    type: integer
                     persistence:
                         driver: orm
-                        model: AppBundle\Entity\Company
-                        provider: ~
-                        listener: ~
-                        finder: ~
-                person:
-                    mappings:
-                        firstname: ~
-                        lastname: ~
-                        businessEmail: ~
-                        personalEmail: ~
-                        skype: ~
-                        tenant:
-                            type: "nested"
-                            properties:
-                                id: ~
-                    persistence:
-                        driver: orm
-                        model: AppBundle\Entity\Person
+                        model: AppBundle\Entity\Organization
                         provider: ~
                         listener: ~
                         finder: ~

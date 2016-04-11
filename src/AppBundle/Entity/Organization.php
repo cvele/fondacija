@@ -7,12 +7,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Cvele\MultiTenantBundle\Model\Traits\TenantAwareEntityTrait;
 use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
+use FOS\ElasticaBundle\Annotation\Search;
 
 /**
  * Organization
  *
  * @ORM\Table(name="organizations")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\OrganizationRepository")
+ * @Search(repositoryClass="AppBundle\Elastica\Repository\OrganizationRepository")
  */
 class Organization implements TenantAwareEntityInterface, AttachableEntityInterface, CreatorAwareInterface
 {
@@ -33,6 +35,13 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     private $name;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="num_persons", type="integer")
+     */
+    private $numPersons = 0;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)
@@ -40,30 +49,21 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity="Person", mappedBy="organization")
+     * @ORM\OneToMany(targetEntity="Person", mappedBy="organization", fetch="EXTRA_LAZY")
      */
     private $persons;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="organizations", fetch="EAGER")
-     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="organizations", fetch="LAZY")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $user;
 
     /**
-     * @ORM\OneToOne(targetEntity="File")
-     * @ORM\JoinColumn(name="logo_file_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity="File", fetch="EAGER")
+     * @ORM\JoinColumn(name="logo_file_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $logo;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="File")
-     * @ORM\JoinTable(name="organization_files",
-     *      joinColumns={@ORM\JoinColumn(name="organization_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="file_id", referencedColumnName="id", unique=true)}
-     *      )
-     */
-    private $files;
 
     use TenantAwareEntityTrait;
 
@@ -71,10 +71,12 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
 
     use Traits\CreatorAwareTrait;
 
+    use Traits\AttachableEntityTrait;
+
     public function __construct()
     {
+        $this->init();
         $this->persons = new ArrayCollection();
-        $this->files = new ArrayCollection();
     }
 
     /**
@@ -135,21 +137,6 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
         return $this->description;
     }
 
-    public function getFiles()
-    {
-        return $this->files;
-    }
-
-    public function addFile(File $file)
-    {
-        $this->files->add($file);
-    }
-
-    public function removeFile(File $file)
-    {
-        $this->files->removeElement($file);
-    }
-
     /**
      * Gets the value of persons.
      *
@@ -201,4 +188,53 @@ class Organization implements TenantAwareEntityInterface, AttachableEntityInterf
         return $this;
     }
 
+
+    /**
+     * Get the value of Num Persons
+     *
+     * @return integer
+     */
+    public function getNumPersons()
+    {
+        return $this->numPersons;
+    }
+
+    /**
+     * Set the value of Num Persons
+     *
+     * @param integer numPersons
+     *
+     * @return self
+     */
+    public function setNumPersons($numPersons)
+    {
+        $this->numPersons = $numPersons;
+
+        return $this;
+    }
+
+
+    /**
+     * Increment value of numPersons
+     *
+     * @return self
+     */
+    public function incrementNumPersons()
+    {
+        $this->numPersons += 1;
+
+        return $this;
+    }
+
+    /**
+     * Decrement value of numPersons
+     *
+     * @return self
+     */
+    public function decrementNumPersons()
+    {
+        $this->numPersons -= 1;
+
+        return $this;
+    }
 }

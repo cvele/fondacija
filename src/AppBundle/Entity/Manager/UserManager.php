@@ -28,4 +28,10 @@ class UserManager extends BaseUserManager
         $this->traitConstruct($dispatcher, $em, $tenantHelper, $class);
         parent::__construct($encoderFactory, $usernameCanonicalizer, $emailCanonicalizer, $em, $class);
     }
+
+
+    public function getPasswordEncoder($user)
+    {
+        return $this->encoderFactory->getEncoder($user);
+    }
 }

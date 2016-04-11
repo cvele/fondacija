@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Annotation\REST;
 use AppBundle\Annotation\RequireTenant;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/api/v1/files")
@@ -18,15 +19,16 @@ class FileApiController extends RestController
 {
     /**
     * @Route("/")
+    * @Route("")
     * @Method({"POST"})
     * @RequireTenant
     */
     public function createAction(Request $request)
     {
-        $uploadedFile = $this->get("request")->files->get('file', null);
+        $uploadedFile = $request->files->get('file', null);
 
         if (null === $uploadedFile || !($uploadedFile instanceof UploadedFile)) {
-            throw new \HttpException(JsonResponse::HTTP_BAD_REQUEST, 'Invalid argument');
+            throw new HttpException(JsonResponse::HTTP_BAD_REQUEST, 'Invalid argument');
         }
 
         $fileManager = $this->get('app.manager.file');

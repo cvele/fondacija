@@ -5,30 +5,34 @@ namespace AppBundle\Entity\Repository;
 
 class UserRepository extends \Doctrine\ORM\EntityRepository
 {
-	public function findAllWithTenant($tenantId)
+
+	use BaseRepositoryTrait {
+		findAllWithTenant as traitFindAllWithTenant;
+		findByIdAndTenant as traitFindByIdAndTenant;
+	}
+
+	protected $entityName = 'User';
+
+	public function findAllWithTenant($tenantId, $orderBy = null)
 	{
+		$order = 'ORDER BY u.createdAt';
+		if (count($orderByArray) > 0) {
+			$order = 'ORDER BY ';
+			foreach($orderByArray as $column => $direction) {
+				$order .= 'u.'.$column . ' ' . $direction;
+			}
+		}
+
         $dql = "SELECT u, t FROM AppBundle:User u
                 LEFT JOIN u.userTenants t
-                WHERE t.id = :tenant";
+                WHERE t.id = :tenant " . $order;
 
 		$query = $this->getEntityManager()->createQuery($dql);
         $query->setParameter('tenant', $tenantId);
-        return $query;
-	}
-
-	public function findById($id)
-	{
-		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:User c where c.id = :id');
-        $query->setParameter('id', $id);
 
         return $query;
 	}
 
-    public function findAll()
-	{
-		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:User c');
-        return $query;
-    }
 
 	public function findByIdAndTenant($id, $tenantId)
 	{

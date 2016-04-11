@@ -50,8 +50,13 @@ class File implements TenantAwareEntityInterface, CreatorAwareInterface
     protected $text;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="files", fetch="EAGER")
-     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id")
+     * @ORM\Column(type="string", name="subfolder", nullable=false, length=255)
+     */
+    protected $subfolder;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="files", fetch="EXTRA_LAZY")
+     * @ORM\JoinColumn(name="creator_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $user;
 
@@ -60,7 +65,13 @@ class File implements TenantAwareEntityInterface, CreatorAwareInterface
 
     public function getPathCallable()
     {
-      return "/dev/null";
+
+      $this->subfolder = date('Y'). DIRECTORY_SEPARATOR
+                          .date('m'). DIRECTORY_SEPARATOR
+                          .date('H'). DIRECTORY_SEPARATOR
+                          .date('i'). DIRECTORY_SEPARATOR;
+
+      return "/Users/vladimir/Projects/fondacija/web/uploads/" . $this->subfolder;
     }
 
     public function callback(array $info)
@@ -104,6 +115,11 @@ class File implements TenantAwareEntityInterface, CreatorAwareInterface
         $this->name = $name;
 
         return $this;
+    }
+
+    public function getUri()
+    {
+        return $this->subfolder . $this->name;
     }
 
     /**

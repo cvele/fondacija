@@ -14,7 +14,7 @@ use Cvele\MultiTenantBundle\Model\TenantAwareUserInterface;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\UserRepository")
  * @ORM\Table(name="users")
  */
-class User extends BaseUser implements TenantAwareUserInterface
+class User extends BaseUser implements TenantAwareUserInterface, AttachableEntityInterface
 {
     use TenantAwareUserTrait;
     use TimestampableEntity;
@@ -37,17 +37,17 @@ class User extends BaseUser implements TenantAwareUserInterface
     protected $lastname;
 
     /**
-     * @ORM\OneToMany(targetEntity="Person", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Person", mappedBy="user", fetch="EXTRA_LAZY")
      */
     private $persons;
 
     /**
-     * @ORM\OneToMany(targetEntity="File", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="File", mappedBy="user", fetch="EXTRA_LAZY")
      */
     private $files;
 
     /**
-     * @ORM\OneToMany(targetEntity="Organization", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Organization", mappedBy="user", fetch="EXTRA_LAZY")
      */
     private $organizations;
 
@@ -58,10 +58,17 @@ class User extends BaseUser implements TenantAwareUserInterface
      */
     protected $invitation;
 
+    /**
+     * @ORM\OneToOne(targetEntity="File")
+     * @ORM\JoinColumn(name="avatar_file_id", referencedColumnName="id")
+     */
+    private $avatar;
+
     public function __construct()
     {
         parent::__construct();
         $this->setupTenantAwareUserTrait();
+        $this->files = new ArrayCollection();
     }
 
     public function setInvitation(Invitation $invitation)
@@ -167,4 +174,46 @@ class User extends BaseUser implements TenantAwareUserInterface
         return $this;
     }
 
+    public function getFullname() {
+        return $this->getFirstname() . ' ' . $this->getLastname();
+    }
+
+    public function getDisplayName() {
+        return $this->getFirstname() . ' ' . mb_substr($this->getLastname(), 0, 1, 'utf-8');
+    }
+
+
+    /**
+     * Get the value of Avatar
+     *
+     * @return mixed
+     */
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    /**
+     * Set the value of Avatar
+     *
+     * @param mixed avatar
+     *
+     * @return self
+     */
+    public function setAvatar($avatar)
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function addFile(File $file)
+    {
+        throw new \Exception("User entity does not support adding files.");
+    }
+
+    public function removeFile(File $file)
+    {
+        throw new \Exception("User entity does not support removing files.");
+    }
 }

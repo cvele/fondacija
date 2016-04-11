@@ -7,6 +7,10 @@ use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\Query as DoctrineQuery;
+use Pagerfanta\Adapter\DoctrineORMAdapter;
+use Pagerfanta\Pagerfanta;
+use League\Fractal\Pagination\PagerfantaPaginatorAdapter;
 
 class RestResponse
 {
@@ -25,15 +29,23 @@ class RestResponse
         $fractal->setSerializer(new ArraySerializer());
         $transformer = $this->transformerFactory->get($entity);
 
-        if ($data instanceof \Doctrine\ORM\Query) {
-            $adapter = new \Pagerfanta\Adapter\DoctrineORMAdapter($data);
-            $pager = new \Pagerfanta\Pagerfanta($adapter);
+        if ($data instanceof Pagerfanta) {
+            $pager = $data;
             $pager->setMaxPerPage($request->query->get('limit', 10));
             $pager->setCurrentPage($request->query->get('page', 1));
             $results = $pager->getCurrentPageResults();
 
             $resource = new Collection($results, $transformer);
-            $resource->setPaginator(new \League\Fractal\Pagination\PagerfantaPaginatorAdapter($pager, [$this, 'paginationRouter']));
+            $resource->setPaginator(new PagerfantaPaginatorAdapter($pager, [$this, 'paginationRouter']));
+        } elseif ($data instanceof DoctrineQuery) {
+            $ormAdapter = new DoctrineORMAdapter($data);
+            $pager = new Pagerfanta($ormAdapter);
+            $pager->setMaxPerPage($request->query->get('limit', 10));
+            $pager->setCurrentPage($request->query->get('page', 1));
+            $results = $pager->getCurrentPageResults();
+
+            $resource = new Collection($results, $transformer);
+            $resource->setPaginator(new PagerfantaPaginatorAdapter($pager, [$this, 'paginationRouter']));
         } elseif (is_array($data)) {
             $resource = new Collection($data, $transformer);
         } else {
@@ -52,7 +64,7 @@ class RestResponse
             parse_str($url_parts['query'], $params);
         }
         $params['page'] =  $page;
-        
+
         $url_parts['query'] = http_build_query($params);
 
         $url = $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];

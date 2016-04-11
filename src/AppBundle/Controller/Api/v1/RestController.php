@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use AppBundle\Entity\AttachableEntityInterface;
 use AppBundle\Annotation\RequireTenant;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Each entity controller must extends this class.
@@ -22,13 +23,15 @@ abstract class RestController extends Controller
     *
     * @return JsonResponse
     *
-    * @Route("/")
+    * @Route("")
     * @Method({"GET"})
     * @RequireTenant
     */
     public function listAction(Request $request)
     {
-        return $this->response($this->manager->findAll(), JsonResponse::HTTP_OK, $request);
+        $json = $request->query->get('sort', null);
+        $orderByArray = json_decode($json, true);
+        return $this->response($this->manager->findAll($orderByArray), JsonResponse::HTTP_OK, $request);
     }
 
     /**
@@ -58,7 +61,6 @@ abstract class RestController extends Controller
     *
     * @return JsonResponse
     *
-    * @Route("/")
     * @Route("")
     * @Method({"POST"})
     * @RequireTenant
@@ -74,32 +76,58 @@ abstract class RestController extends Controller
     }
 
     /**
-     * Base "attach" action.
+     * Base "deattach" action.
      *
      * @return JsonResponse
      *
-     * @Route("/{id}/attach/{fileId}")
-     * @Method({"PUT"})
+     * @Route("/{id}/deattach/{fileId}")
+     * @Method({"UNLINK"})
      * @RequireTenant
      */
-    public function attachAction(Request $request, $id, $fileId)
+    public function deattachAction(Request $request, $id, $fileId)
     {
-        $entity = $this->manager->findById($id);
+        $entity = $this->manager->findById($id)->getSingleResult();
 
         if (!$entity instanceof AttachableEntityInterface) {
           throw new HttpException(JsonResponse::HTTP_METHOD_NOT_ALLOWED, 'Attach method is not supported on this entity.');
         }
 
         $fileManager = $this->get('app.manager.file');
-        $file = $fileManager->findById($fileId);
+        $file = $fileManager->findById($fileId)->getSingleResult();
         if (false === $file) {
             throw $this->createNotFoundException("File not found.");
         }
-        $fileManager->attach($file, $object);
+        $fileManager->deattach($file, $entity);
 
         return $this->response([], JsonResponse::HTTP_NO_CONTENT, $request);
     }
 
+    /**
+     * Base "attach" action.
+     *
+     * @return JsonResponse
+     *
+     * @Route("/{id}/attach/{fileId}")
+     * @Method({"LINK"})
+     * @RequireTenant
+     */
+    public function attachAction(Request $request, $id, $fileId)
+    {
+        $entity = $this->manager->findById($id)->getSingleResult();
+
+        if (!$entity instanceof AttachableEntityInterface) {
+          throw new HttpException(JsonResponse::HTTP_METHOD_NOT_ALLOWED, 'Attach method is not supported on this entity.');
+        }
+
+        $fileManager = $this->get('app.manager.file');
+        $file = $fileManager->findById($fileId)->getSingleResult();
+        if (false === $file) {
+            throw $this->createNotFoundException("File not found.");
+        }
+        $fileManager->attach($file, $entity);
+
+        return $this->response([], JsonResponse::HTTP_NO_CONTENT, $request);
+    }
 
     /**
      * Base "update" action.
@@ -108,17 +136,34 @@ abstract class RestController extends Controller
      *
      * @Route("/{id}")
      * @Method({"PUT"})
-     * @Method({"PATCH"})
      * @RequireTenant
      */
     public function updateAction(Request $request, $id)
     {
-        $entity = $this->manager->findById($id);
+        $entity = $this->manager->findById($id)->getSingleResult();
+
+        if ($entity === null) {
+            throw $this->createNotFoundException('Resource not found.');
+        }
         $payload = $this->parseRequest($request);
         $entity = $this->manager->applyPayloadToEntity($entity, $payload);
         $this->manager->save($entity);
 
-        return $this->response($this->getEntity($entity->getId()), JsonResponse::HTTP_OK, $request);
+        return $this->response($entity, JsonResponse::HTTP_OK, $request);
+    }
+
+    /**
+     * Base "update" action.
+     *
+     * @return JsonResponse
+     *
+     * @Route("/{id}")
+     * @Method({"PATCH"})
+     * @RequireTenant
+     */
+    public function patchAction(Request $request, $id)
+    {
+        return $this->updateAction($request, $id);
     }
 
     /**

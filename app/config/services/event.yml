@@ -12,17 +12,29 @@ services:
         tags:
             - { name: kernel.event_listener, event: app.entity.saved, method: sendInvitationEmail }
 
-    app.entity_event.file_attached_listener:
-        class: AppBundle\Event\Listener\FileAttachedListener
-        arguments: ["@app.manager.file", "@app.apache_tika"]
+    # app.entity_event.file_attached_listener:
+    #     class: AppBundle\Event\Listener\FileAttachedListener
+    #     arguments: ["@app.manager.file", "@app.apache_tika"]
+    #     tags:
+    #         - { name: kernel.event_listener, event: app.file.attached, method: processApacheTika }
+
+    app.entity_event.avatar_attached_listener:
+        class: AppBundle\Event\Listener\AvatarAttachedListener
+        arguments: ["@app.manager.file", "@liip_imagine.data.manager", "@liip_imagine.filter.manager", "@security.token_storage"]
         tags:
-        - { name: kernel.event_listener, event: app.file.attached, method: processApacheTika }
+            - { name: kernel.event_listener, event: app.file.attached, method: createAvatarThumbnail }
 
     app.exception_listener:
         class: AppBundle\Event\Listener\ExceptionListener
         tags:
             - { name: kernel.event_listener, event: kernel.exception }
 
+
+    app.doctrine_event.person_count_listener:
+        class: AppBundle\Event\Listener\PersonCountListener
+        tags:
+            - { name: doctrine.event_listener, event: postPersist, connection: default, priority: 99 }
+            - { name: doctrine.event_listener, event: postRemove, connection: default, priority: 99 }
 
     app.security.doctrine.tenant_listener:
         class: AppBundle\Event\Listener\TenantSecurityListener

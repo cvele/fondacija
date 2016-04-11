@@ -12,7 +12,7 @@ class FileTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [
+    protected $availableIncludes = [
         'user', 'tenant'
     ];
 
@@ -21,13 +21,18 @@ class FileTransformer extends TransformerAbstract
      *
      * @return array
      */
-    public function transform(File $file)
+    public function transform(File $file = null)
     {
+        if ($file === null) {
+            return [];
+        }
+
         return [
             'id'        => (int) $file->getId(),
             'mimeType'  => $file->getMimeType(),
             'size'      => $file->getSize(),
-            'name'      => $file->getName()
+            'name'      => $file->getName(),
+            'uri'       => $file->getUri()
         ];
     }
 

@@ -37,7 +37,10 @@ class PersonTransformer extends TransformerAbstract
             'firstname'       => $person->getFirstname(),
             'lastname'        => $person->getLastname(),
             'email'           => $person->getEmail(),
-            'organizationId'  => $person->getOrganization()->getId()
+            'organizationId'  => $person->getOrganization()->getId(),
+            'fileCount'       => $person->getNumFiles(),
+            'createdAt'       => $person->getCreatedAt(),
+            'updatedAt'       => $person->getUpdatedAt()
         ];
     }
 

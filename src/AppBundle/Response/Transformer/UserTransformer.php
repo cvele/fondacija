@@ -17,6 +17,9 @@ class UserTransformer extends TransformerAbstract
         'persons', 'organizations', 'files', 'tenants'
     ];
 
+    protected $defaultIncludes = [
+        'avatar'
+    ];
     /**
      * Turn this item object into a generic array
      *
@@ -29,10 +32,24 @@ class UserTransformer extends TransformerAbstract
             'username'  => $user->getUsername(),
             'email'     => $user->getEmail(),
             'lastLogin' => $user->getLastLogin(),
-            'enabled'   => (bool) $user->isEnabled()
+            'enabled'   => (bool) $user->isEnabled(),
+            'firstname' => $user->getFirstname(),
+            'lastname' => $user->getLastname(),
+            'fullname' => $user->getFullname(),
+            'displayname' => $user->getDisplayName()
         ];
     }
 
+    /**
+     * Include avatar item
+     *
+     * @param User $user
+     * @return \League\Fractal\Resource\Item
+     */
+    public function includeAvatar(User $user)
+    {
+        return $this->item($user->getAvatar(), new FileTransformer);
+    }
     /**
      * Include File collection
      *
