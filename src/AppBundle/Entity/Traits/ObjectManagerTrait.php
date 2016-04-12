@@ -8,6 +8,7 @@ use Cvele\MultiTenantBundle\Model\TenantAwareUserInterface;
 use Cvele\MultiTenantBundle\Helper\TenantHelper;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Event\EntityEvent;
+use AppBundle\Entity\Tenant;
 
 trait ObjectManagerTrait
 {

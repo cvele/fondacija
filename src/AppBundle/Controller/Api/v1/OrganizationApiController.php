@@ -5,7 +5,6 @@ namespace AppBundle\Controller\Api\v1;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\Annotation\REST;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use AppBundle\Helper\ElasticaResultHelper;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Annotation\RequireTenant;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -31,7 +30,6 @@ class OrganizationApiController extends RestController
         $sortDirection = $request->query->get('direction', 'desc');
         $q = $request->query->get('q', null);
 
-        $finder = $this->get('fos_elastica.finder.app.organization');
         $tenantHelper = $this->get('multi_tenant.helper');
 
         /** var FOS\ElasticaBundle\Manager\RepositoryManager */

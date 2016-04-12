@@ -10,10 +10,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use AppBundle\Annotation\RequireTenant;
 use AppBundle\Annotation\REST;
 
-use FOS\UserBundle\FOSUserEvents;
-use FOS\UserBundle\Event\FormEvent;
-use FOS\UserBundle\Event\GetResponseUserEvent;
-use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Model\UserInterface;
 
 /**
@@ -206,8 +202,6 @@ class UserApiController extends RestController
 
         /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
         $userManager = $this->get('fos_user.user_manager');
-        /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
-        $dispatcher = $this->get('event_dispatcher');
 
         $user = $userManager->findUserByConfirmationToken($token);
 

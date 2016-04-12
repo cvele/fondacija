@@ -3,7 +3,6 @@
 namespace AppBundle\Event\Listener;
 
 use Symfony\Component\EventDispatcher\Event;
-use Enzim\Lib\TikaWrapper\TikaWrapper;
 use AppBundle\Entity\Manager\FileManager;
 use AppBundle\Entity\File;
 use Liip\ImagineBundle\Model\Binary;

@@ -30,7 +30,7 @@ trait BaseRepositoryTrait
         return $query;
 	}
 
-    public function findAll($orderBy = null)
+    public function findAll($orderByArray = [])
 	{
         $order = 'ORDER BY c.createdAt';
         if (count($orderByArray) > 0) {
