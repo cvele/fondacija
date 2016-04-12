@@ -11,7 +11,7 @@ use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
  * @ORM\Table(name="files")
  * @Gedmo\Uploadable(pathMethod="getPathCallable", callback="callback", filenameGenerator="SHA1", allowOverwrite=false, appendNumber=true)
  */
-class File implements TenantAwareEntityInterface, CreatorAwareInterface
+class File implements TenantAwareEntityInterface, CreatorAwareInterface, EntityInterface
 {
     /**
      * @ORM\Column(type="integer")

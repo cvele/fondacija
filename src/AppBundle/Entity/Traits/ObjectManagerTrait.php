@@ -9,6 +9,7 @@ use Cvele\MultiTenantBundle\Helper\TenantHelper;
 use Doctrine\Common\Persistence\ObjectManager;
 use AppBundle\Event\EntityEvent;
 use AppBundle\Entity\Tenant;
+use AppBundle\Entity\EntityInterface;
 
 trait ObjectManagerTrait
 {
@@ -115,7 +116,7 @@ trait ObjectManagerTrait
     }
 
 
-    public function applyPayloadToEntity($entity, $payload)
+    public function applyPayloadToEntity(EntityInterface $entity, $payload)
     {
         foreach ($payload as $name => $value) {
             if ($name !== 'id' && $name !== 'tenant' && $name != 'user') {
@@ -129,21 +130,21 @@ trait ObjectManagerTrait
         return $entity;
     }
 
-    public function save($entity, $event_name = 'app.entity.saved')
+    public function save(EntityInterface $entity, $event_name = 'app.entity.saved')
     {
         $this->om->persist($entity);
         $this->om->flush();
         $this->dispatch($event_name, $entity);
     }
 
-    public function delete($entity, $event_name = 'app.entity.deleted')
+    public function delete(EntityInterface $entity, $event_name = 'app.entity.deleted')
     {
         $this->om->remove($entity);
         $this->om->flush();
         $this->dispatch($event_name, $entity);
     }
 
-    private function dispatch($event_name, $entity)
+    private function dispatch(EntityInterface $event_name, $entity)
     {
         if ($event_name !== false)
         {

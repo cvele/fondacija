@@ -13,7 +13,7 @@ use Cvele\MultiTenantBundle\Model\TenantAwareEntityInterface;
  * @ORM\Table(name="persons")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\PersonRepository")
  */
-class Person implements TenantAwareEntityInterface, AttachableEntityInterface, CreatorAwareInterface
+class Person implements TenantAwareEntityInterface, AttachableEntityInterface, CreatorAwareInterface, EntityInterface
 {
     /**
      * @var integer

@@ -10,7 +10,7 @@ use Cvele\MultiTenantBundle\Model\Tenant as BaseTenant;
  * @ORM\Entity
  * @ORM\Table(name="tenants")
  */
-class Tenant extends BaseTenant
+class Tenant extends BaseTenant implements EntityInterface
 {
 
     /**

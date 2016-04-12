@@ -14,7 +14,7 @@ use Cvele\MultiTenantBundle\Model\TenantAwareUserInterface;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\UserRepository")
  * @ORM\Table(name="users")
  */
-class User extends BaseUser implements TenantAwareUserInterface, AttachableEntityInterface
+class User extends BaseUser implements TenantAwareUserInterface, AttachableEntityInterface, EntityInterface
 {
     use TenantAwareUserTrait;
     use TimestampableEntity;

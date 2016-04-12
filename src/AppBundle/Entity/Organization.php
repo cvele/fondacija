@@ -16,7 +16,7 @@ use FOS\ElasticaBundle\Annotation\Search;
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\OrganizationRepository")
  * @Search(repositoryClass="AppBundle\Elastica\Repository\OrganizationRepository")
  */
-class Organization implements TenantAwareEntityInterface, AttachableEntityInterface, CreatorAwareInterface
+class Organization implements TenantAwareEntityInterface, AttachableEntityInterface, CreatorAwareInterface, EntityInterface
 {
     /**
      * @var integer
