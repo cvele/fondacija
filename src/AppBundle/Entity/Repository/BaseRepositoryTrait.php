@@ -14,8 +14,9 @@ trait BaseRepositoryTrait
 			}
 		}
 
+		$entityName = mysql_real_escape_string($this->entityName);
 		$query = $this->getEntityManager()
-						->createQuery('SELECT c FROM AppBundle:' .$this->entityName. ' c
+						->createQuery('SELECT c FROM AppBundle:' .$entityName. ' c
 										WHERE c.tenant = :tenant ' . $order);
         $query->setParameter('tenant', $tenantId);
         return $query;
@@ -24,7 +25,8 @@ trait BaseRepositoryTrait
 
 	public function findById($id)
 	{
-		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:' .$this->entityName. ' c where c.id = :id');
+		$entityName = mysql_real_escape_string($this->entityName);
+		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:' .$entityName. ' c where c.id = :id');
         $query->setParameter('id', $id);
 
         return $query;
@@ -39,13 +41,15 @@ trait BaseRepositoryTrait
                 $order .= 'c.'.$column . ' ' . $direction;
             }
         }
-		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:' .$this->entityName. ' c '.$order);
+		$entityName = mysql_real_escape_string($this->entityName);
+		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:' .$entityName. ' c '.$order);
         return $query;
     }
 
 	public function findByIdAndTenant($id, $tenantId)
 	{
-		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:' .$this->entityName. ' c where c.tenant = :tenant and c.id = :id');
+		$entityName = mysql_real_escape_string($this->entityName);
+		$query = $this->getEntityManager()->createQuery('SELECT c FROM AppBundle:' .$entityName. ' c where c.tenant = :tenant and c.id = :id');
         $query->setParameter('tenant', $tenantId);
         $query->setParameter('id', $id);
         return $query;
